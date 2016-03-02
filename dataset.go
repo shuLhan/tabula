@@ -441,26 +441,30 @@ func (dataset *Dataset) TransposeToRows() {
 		dataset.SetMode(DatasetModeRows)
 	}
 
-	// Get the least length of columns.
-	rowlen := math.MaxInt32
+	// Get the max length of columns.
+	rowlen := math.MinInt32
 	flen := len(dataset.Columns)
 
 	for f := 0; f < flen; f++ {
 		l := dataset.Columns[f].Len()
 
-		if l < rowlen {
+		if l > rowlen {
 			rowlen = l
 		}
 	}
 
 	dataset.Rows = make(Rows, 0)
 
-	// transpose record from row to column
+	// Transpose record from column to row.
 	for r := 0; r < rowlen; r++ {
 		row := make(Row, flen)
 
 		for f := 0; f < flen; f++ {
-			row[f] = dataset.Columns[f].Records[r]
+			if dataset.Columns[f].Len() > r {
+				row[f] = dataset.Columns[f].Records[r]
+			} else {
+				row[f] = &Record{V: nil}
+			}
 		}
 
 		dataset.Rows = append(dataset.Rows, row)
@@ -1013,10 +1017,20 @@ func (dataset *Dataset) SelectRowsWhere(colidx int, colval string) (
 /*
 MergeColumns append columns from other dataset into current dataset.
 */
-func (dataset *Dataset) MergeColumns(other Dataset) {
+func (dataset *Dataset) MergeColumns(other DatasetInterface) {
+	othermode := other.GetMode()
+	if othermode == DatasetModeRows {
+		other.TransposeToColumns()
+	}
+
 	cols := other.GetDataAsColumns()
 	for _, col := range cols {
 		dataset.PushColumn(col)
+	}
+
+	switch othermode {
+	case DatasetModeRows:
+		other.TransposeToRows()
 	}
 }
 
