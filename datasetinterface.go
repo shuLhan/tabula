@@ -32,4 +32,6 @@ type DatasetInterface interface {
 	PushRow(r Row)
 	PushRowToColumns(r Row)
 	PushColumn(col Column)
+
+	MergeColumns(DatasetInterface)
 }
