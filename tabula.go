@@ -73,3 +73,22 @@ Matrix mode consume more memory but give a flexible way to manage records.
 
 */
 package tabula
+
+import (
+	"os"
+	"strconv"
+)
+
+var (
+	// DEBUG debug level, set using environment TABULA_DEBUG
+	DEBUG = 0
+)
+
+func init() {
+	v := os.Getenv("TABULA_DEBUG")
+	if v == "" {
+		DEBUG = 0
+	} else {
+		DEBUG, _ = strconv.Atoi(v)
+	}
+}
