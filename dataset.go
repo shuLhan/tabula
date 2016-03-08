@@ -7,7 +7,6 @@ package tabula
 import (
 	"errors"
 	"fmt"
-	"github.com/golang/glog"
 	"math"
 )
 
@@ -800,7 +799,9 @@ func (dataset *Dataset) SplitRowsByNumeric(colidx int, splitVal float64) (
 		dataset.TransposeToRows()
 	}
 
-	glog.V(2).Infoln("dataset:", dataset)
+	if DEBUG >= 2 {
+		fmt.Println("[tabula] dataset:", dataset)
+	}
 
 	splitLess = dataset.Clone()
 	splitGreater = dataset.Clone()
@@ -813,8 +814,10 @@ func (dataset *Dataset) SplitRowsByNumeric(colidx int, splitVal float64) (
 		}
 	}
 
-	glog.V(2).Infoln(">>> split less:", splitLess)
-	glog.V(2).Infoln(">>> split greater:", splitGreater)
+	if DEBUG >= 2 {
+		fmt.Println("[tabula] split less:", splitLess)
+		fmt.Println("[tabula] split greater:", splitGreater)
+	}
 
 	switch orgmode {
 	case DatasetModeColumns:
