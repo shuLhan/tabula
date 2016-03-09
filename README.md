@@ -37,11 +37,20 @@ matrix:
 	...
 	ROW-y: record record ... record
 
-## Record Type
+## What make this package different from other dataset packages?
+
+### Record Type
 
 There are only three valid type in record: int64, float64, and string.
 
-## Dataset Mode
+Each record is a pointer to interface value. Which means,
+
+* Switching between rows to columns mode, or vice versa, is only a matter of
+  pointer switching, no memory relocations.
+* When using matrix mode, additional memory is used only to allocate slice, the
+  record in each rows and columns is shared.
+
+### Dataset Mode
 
 Tabula has three mode for dataset: rows, columns, or matrix.
 
@@ -51,69 +60,91 @@ For example, given a table of data,
     a,b,c
     1,2,3
 
-"rows" mode is where each line saved in its own slice, resulting in Rows:
+* When in "rows" mode, each line is saved in its own slice, resulting in Rows:
+  ```
+  Rows[0]: [a b c]
+  Rows[1]: [1 2 3]
+  ```
+  Columns is used only to save record metadata: column name, type, flag and
+  value space.
 
-    Rows[0]: [a b c]
-    Rows[1]: [1 2 3]
+* When in "columns" mode, each line saved in columns, resulting in Columns:
+  ```
+  Columns[0]: {col1 0 0 [] [a 1]}
+  Columns[1]: {col2 0 0 [] [b 2]}
+  Columns[1]: {col3 0 0 [] [c 3]}
+  ```
+  Each column will contain metadata including column name, type, flag, and
+  value space (all possible value that _may_ contain in column value).
 
-"columns" mode is where each line saved by columns, resulting in Columns:
+  Rows in "columns" mode is empty.
 
-    Columns[0]: {col1 0 0 [] [a 1]}
-    Columns[1]: {col2 0 0 [] [b 2]}
-    Columns[1]: {col3 0 0 [] [c 3]}
+* When in "matrix" mode, each record is saved both in row and column using
+  shared pointer to record.
 
-Unlike rows mode, each column contain metadata including column name, type,
-flag, and value space (all possible value that _may_ contain in column value).
-
-"matrix" mode is where each record saved both in row and column.
-
-Matrix mode consume more memory but give a flexible way to manage records.
+  Matrix mode consume more memory by allocating two slice in rows and columns,
+  but give flexible way to manage records.
 
 ## Features
 
-* Switch between rows and columns mode.
+* **Switching between rows and columns mode**.
 
-* Random pick rows with or without replacement.
+* [**Random pick rows with or without replacement**](https://godoc.org/github.com/shuLhan/tabula#Dataset.RandomPickRows).
 
-* Random pick columns with or without replacement.
+* [**Random pick columns with or without replacement**](https://godoc.org/github.com/shuLhan/tabula#Dataset.RandomPickColumns).
 
-* Select column from dataset by index.
+* [**Select column from dataset by index**](https://godoc.org/github.com/shuLhan/tabula#Dataset.SelectColumnsByIdx).
 
-* Sort columns by index.
+* [**Sort columns by index**](https://godoc.org/github.com/shuLhan/tabula#Dataset.SortColumnsByIndex),
+  or indirect sort.
 
-* Split rows value by numeric.
+* [**Split rows value by numeric**](https://godoc.org/github.com/shuLhan/tabula#Dataset.SplitRowsByNumeric).
+  For example, given two numeric rows,
+  ```
+  A: {1,2,3,4}
+  B: {5,6,7,8}
+  ```
+  if we split row by value 7, the data will splitted into left set
+  ```
+  A': {1,2}
+  B': {5,6}
+  ```
+  and the right set would be
+  ```
+  A'': {3,4}
+  B'': {7,8}
+  ```
 
-For example, given two numeric rows,
-
-	A: {1,2,3,4}
-	B: {5,6,7,8}
-
-if we split row by value 7, the data will splitted into left set
-
-	A': {1,2}
-	B': {5,6}
-
-and the right set would be
-
-	A'': {3,4}
-	B'': {7,8}
-
-* Split rows by string.
-
-For example, given two rows,
-
-	X: [A,B,A,B,C,D,C,D]
-	Y: [1,2,3,4,5,6,7,8]
-
-if we split the rows with value set `[A,C]`, the data will splitted
-into left set which contain all rows that have A or C,
-
+* [**Split rows by string**](https://godoc.org/github.com/shuLhan/tabula#Dataset.SplitRowsByCategorical).
+  For example, given two rows,
+  ```
+  X: [A,B,A,B,C,D,C,D]
+  Y: [1,2,3,4,5,6,7,8]
+  ```
+  if we split the rows with value set `[A,C]`, the data will splitted into left
+  set which contain all rows that have A or C,
+  ```
 	X': [A,A,C,C]
 	Y': [1,3,5,7]
-
-and the right set, excluded set, will contain all rows which is not A or C,
-
+  ```
+  and the right set, excluded set, will contain all rows which is not A or C,
+  ```
 	X'': [B,B,D,D]
 	Y'': [2,4,6,8]
+  ```
 
-* Select row where record at column x is equal to y (select where ...).
+* [**Select row where**](https://godoc.org/github.com/shuLhan/tabula#Dataset.SelectRowsWhere).
+  Select row at column index x where their value is equal to y (an analogy to
+  _select where_ in SQL).
+  For example, given a rows of dataset,
+  ```
+  ROW-1: {1,A}
+  ROW-2: {2,B}
+  ROW-3: {3,A}
+  ROW-4: {4,C}
+  ```
+  we can select row where the second column contain 'A', which result in,
+  ```
+  ROW-1: {1,A}
+  ROW-3: {3,A}
+  ```
