@@ -115,6 +115,13 @@ func (col *Column) GetName() string {
 }
 
 /*
+SetRecords will set records in column to `recs`.
+*/
+func (col *Column) SetRecords(recs *Records) {
+	col.Records = *recs
+}
+
+/*
 Interface return the column object as an interface.
 */
 func (col *Column) Interface() interface{} {

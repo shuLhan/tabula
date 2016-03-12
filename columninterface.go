@@ -14,5 +14,7 @@ type ColumnInterface interface {
 	GetType() int
 	GetName() string
 
+	SetRecords(recs *Records)
+
 	Interface() interface{}
 }
