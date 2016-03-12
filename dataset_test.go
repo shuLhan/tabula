@@ -289,7 +289,7 @@ func TestSelectRowsWhere(t *testing.T) {
 	populateWithRows(t, dataset)
 
 	// select all rows where the first column value is 9.
-	selected := dataset.SelectRowsWhere(0, "9")
+	selected := tabula.SelectRowsWhere(dataset, 0, "9")
 	exp := dataset.GetRow(9)
 	got := selected.GetRow(0)
 

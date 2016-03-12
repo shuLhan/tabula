@@ -19,6 +19,7 @@ type DatasetInterface interface {
 	GetMode() int
 	SetMode(mode int)
 	GetNColumn() int
+	Len() int
 	GetNRow() int
 	SetColumnsType(types []int)
 	GetColumnsType() []int
@@ -32,6 +33,7 @@ type DatasetInterface interface {
 	GetColumnByName(name string) *Column
 	GetRow(idx int) *Row
 	GetRows() *Rows
+	SetRows(*Rows)
 	GetData() interface{}
 	GetDataAsRows() Rows
 	GetDataAsColumns() Columns
@@ -262,6 +264,80 @@ func SplitRowsByValue(di DatasetInterface, colidx int, value interface{}) (
 
 	if e != nil {
 		return nil, nil, e
+	}
+
+	return
+}
+
+/*
+SelectRowsWhere return all rows which column value in `colidx` is equal
+to `colval`.
+*/
+func SelectRowsWhere(dataset DatasetInterface, colidx int, colval string) DatasetInterface {
+	orgmode := dataset.GetMode()
+
+	if orgmode == DatasetModeColumns {
+		dataset.TransposeToRows()
+	}
+
+	selected := NewDataset(dataset.GetMode(), nil, nil)
+
+	selected.Rows = dataset.GetRows().SelectWhere(colidx, colval)
+
+	switch orgmode {
+	case DatasetModeColumns:
+		dataset.TransposeToColumns()
+		selected.TransposeToColumns()
+	case DatasetModeMatrix, DatasetNoMode:
+		selected.TransposeToColumns()
+	}
+
+	return selected
+}
+
+/*
+RandomPickRows return `n` item of row that has been selected randomly from
+dataset.Rows. The ids of rows that has been picked is saved id `pickedIdx`.
+
+If duplicate is true, the row that has been picked can be picked up again,
+otherwise it only allow one pick. This is also called as random selection with
+or without replacement in machine learning domain.
+
+If output mode is columns, it will be transposed to rows.
+*/
+func RandomPickRows(dataset DatasetInterface, n int, duplicate bool) (
+	picked DatasetInterface,
+	unpicked DatasetInterface,
+	pickedIdx []int,
+	unpickedIdx []int,
+) {
+	orgmode := dataset.GetMode()
+
+	if orgmode == DatasetModeColumns {
+		dataset.TransposeToRows()
+	}
+
+	picked = dataset.Clone().(DatasetInterface)
+	unpicked = dataset.Clone().(DatasetInterface)
+
+	pickedRows, unpickedRows, pickedIdx, unpickedIdx :=
+		dataset.GetRows().RandomPick(n, duplicate)
+
+	picked.SetRows(&pickedRows)
+	unpicked.SetRows(&unpickedRows)
+
+	// switch the dataset based on original mode
+	switch orgmode {
+	case DatasetModeColumns:
+		dataset.TransposeToColumns()
+		// transform the picked and unpicked set.
+		picked.TransposeToColumns()
+		unpicked.TransposeToColumns()
+
+	case DatasetModeMatrix, DatasetNoMode:
+		// transform the picked and unpicked set.
+		picked.TransposeToColumns()
+		unpicked.TransposeToColumns()
 	}
 
 	return

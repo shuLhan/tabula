@@ -340,6 +340,13 @@ func (dataset *Dataset) GetRows() *Rows {
 }
 
 /*
+SetRows will replace current rows with new one from parameter.
+*/
+func (dataset *Dataset) SetRows(rows *Rows) {
+	dataset.Rows = *rows
+}
+
+/*
 GetData return the data, based on mode (rows, columns, or matrix).
 */
 func (dataset *Dataset) GetData() interface{} {
@@ -676,51 +683,6 @@ func (dataset *Dataset) PushColumnToRows(col Column) {
 }
 
 /*
-RandomPickRows return `n` item of row that has been selected randomly from
-dataset.Rows. The ids of rows that has been picked is saved id `pickedIdx`.
-
-If duplicate is true, the row that has been picked can be picked up again,
-otherwise it only allow one pick. This is also called as random selection with
-or without replacement in machine learning domain.
-
-If output mode is columns, it will be transposed to rows.
-*/
-func (dataset *Dataset) RandomPickRows(n int, duplicate bool) (
-	picked *Dataset,
-	unpicked *Dataset,
-	pickedIdx []int,
-	unpickedIdx []int,
-) {
-	orgmode := dataset.GetMode()
-
-	if orgmode == DatasetModeColumns {
-		dataset.TransposeToRows()
-	}
-
-	picked = dataset.Clone().(*Dataset)
-	unpicked = dataset.Clone().(*Dataset)
-
-	picked.Rows, unpicked.Rows, pickedIdx, unpickedIdx =
-		dataset.Rows.RandomPick(n, duplicate)
-
-	// switch the dataset based on original mode
-	switch orgmode {
-	case DatasetModeColumns:
-		dataset.TransposeToColumns()
-		// transform the picked and unpicked set.
-		picked.TransposeToColumns()
-		unpicked.TransposeToColumns()
-
-	case DatasetModeMatrix, DatasetNoMode:
-		// transform the picked and unpicked set.
-		picked.TransposeToColumns()
-		unpicked.TransposeToColumns()
-	}
-
-	return
-}
-
-/*
 RandomPickColumns will select `n` column randomly from dataset and return
 new dataset with picked and unpicked columns, and their column index.
 
@@ -794,34 +756,6 @@ func (dataset *Dataset) SelectColumnsByIdx(colsIdx []int) (
 		// do nothing
 	case DatasetModeMatrix:
 		// do nothing
-	}
-
-	return
-}
-
-/*
-SelectRowsWhere return all rows which column value in `colidx` is equal
-to `colval`.
-*/
-func (dataset *Dataset) SelectRowsWhere(colidx int, colval string) (
-	selected Dataset,
-) {
-	orgmode := dataset.GetMode()
-
-	if orgmode == DatasetModeColumns {
-		dataset.TransposeToRows()
-	}
-
-	selected.Init(dataset.GetMode(), nil, nil)
-
-	selected.Rows = dataset.Rows.SelectWhere(colidx, colval)
-
-	switch orgmode {
-	case DatasetModeColumns:
-		dataset.TransposeToColumns()
-		selected.TransposeToColumns()
-	case DatasetModeMatrix, DatasetNoMode:
-		selected.TransposeToColumns()
 	}
 
 	return
