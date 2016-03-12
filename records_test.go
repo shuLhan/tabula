@@ -23,7 +23,7 @@ func TestSortByIndex(t *testing.T) {
 	sorted := data.SortByIndex(sortedIdx)
 
 	got := fmt.Sprint(sorted)
-	exp := fmt.Sprint(expect)
+	exp := fmt.Sprint(&expect)
 
 	assert.Equal(t, exp, got)
 }

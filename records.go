@@ -12,11 +12,11 @@ type Records []*Record
 /*
 SortByIndex sort record in column by index.
 */
-func (recs Records) SortByIndex(sortedIdx []int) (sorted []*Record) {
-	sorted = make([]*Record, len(recs))
+func (recs Records) SortByIndex(sortedIdx []int) *Records {
+	sorted := make(Records, len(recs))
 
 	for i := range sortedIdx {
 		sorted[i] = recs[sortedIdx[i]]
 	}
-	return
+	return &sorted
 }
