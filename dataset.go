@@ -309,6 +309,13 @@ func (dataset *Dataset) GetColumns() *Columns {
 }
 
 /*
+SetColumns will replace current columns with new one from parameter.
+*/
+func (dataset *Dataset) SetColumns(cols *Columns) {
+	dataset.Columns = *cols
+}
+
+/*
 GetColumnByName return column based on their `name`.
 */
 func (dataset *Dataset) GetColumnByName(name string) (col *Column) {
@@ -680,46 +687,6 @@ func (dataset *Dataset) PushColumnToRows(col Column) {
 
 		row.PushBack(rec)
 	}
-}
-
-/*
-RandomPickColumns will select `n` column randomly from dataset and return
-new dataset with picked and unpicked columns, and their column index.
-
-If duplicate is true, column that has been pick up can be pick up again.
-
-If dataset output mode is rows, it will transposed to columns.
-*/
-func (dataset *Dataset) RandomPickColumns(n int, dup bool, excludeIdx []int) (
-	picked Dataset,
-	unpicked Dataset,
-	pickedIdx []int,
-	unpickedIdx []int,
-) {
-	orgmode := dataset.GetMode()
-
-	if orgmode == DatasetModeRows {
-		dataset.TransposeToColumns()
-	}
-
-	picked.Init(dataset.GetMode(), nil, nil)
-	unpicked.Init(dataset.GetMode(), nil, nil)
-
-	picked.Columns, unpicked.Columns, pickedIdx, unpickedIdx =
-		dataset.Columns.RandomPick(n, dup, excludeIdx)
-
-	// transpose picked and unpicked dataset based on original mode
-	switch orgmode {
-	case DatasetModeRows:
-		dataset.TransposeToRows()
-		picked.TransposeToRows()
-		unpicked.TransposeToRows()
-	case DatasetModeMatrix, DatasetNoMode:
-		picked.TransposeToRows()
-		unpicked.TransposeToRows()
-	}
-
-	return
 }
 
 /*

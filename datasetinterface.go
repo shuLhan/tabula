@@ -30,6 +30,7 @@ type DatasetInterface interface {
 	AddColumn(tipe int, name string, vs []string)
 	GetColumn(idx int) *Column
 	GetColumns() *Columns
+	SetColumns(*Columns)
 	GetColumnByName(name string) *Column
 	GetRow(idx int) *Row
 	GetRows() *Rows
@@ -338,6 +339,50 @@ func RandomPickRows(dataset DatasetInterface, n int, duplicate bool) (
 		// transform the picked and unpicked set.
 		picked.TransposeToColumns()
 		unpicked.TransposeToColumns()
+	}
+
+	return
+}
+
+/*
+RandomPickColumns will select `n` column randomly from dataset and return
+new dataset with picked and unpicked columns, and their column index.
+
+If duplicate is true, column that has been pick up can be pick up again.
+
+If dataset output mode is rows, it will transposed to columns.
+*/
+func RandomPickColumns(dataset DatasetInterface, n int, dup bool,
+	excludeIdx []int) (
+	picked DatasetInterface,
+	unpicked DatasetInterface,
+	pickedIdx []int,
+	unpickedIdx []int,
+) {
+	orgmode := dataset.GetMode()
+
+	if orgmode == DatasetModeRows {
+		dataset.TransposeToColumns()
+	}
+
+	picked = dataset.Clone().(DatasetInterface)
+	unpicked = dataset.Clone().(DatasetInterface)
+
+	pickedColumns, unpickedColumns, pickedIdx, unpickedIdx :=
+		dataset.GetColumns().RandomPick(n, dup, excludeIdx)
+
+	picked.SetColumns(&pickedColumns)
+	unpicked.SetColumns(&unpickedColumns)
+
+	// transpose picked and unpicked dataset based on original mode
+	switch orgmode {
+	case DatasetModeRows:
+		dataset.TransposeToRows()
+		picked.TransposeToRows()
+		unpicked.TransposeToRows()
+	case DatasetModeMatrix, DatasetNoMode:
+		picked.TransposeToRows()
+		unpicked.TransposeToRows()
 	}
 
 	return
