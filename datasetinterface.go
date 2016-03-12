@@ -14,36 +14,48 @@ import (
 DatasetInterface is the interface for working with DSV data.
 */
 type DatasetInterface interface {
+	Init(mode int, types []int, names []string)
 	Clone() DatasetInterface
 	Reset() error
+
 	GetMode() int
 	SetMode(mode int)
+
 	GetNColumn() int
-	Len() int
 	GetNRow() int
-	SetColumnsType(types []int)
+	Len() int
+
 	GetColumnsType() []int
-	GetColumnTypeAt(colidx int) (int, error)
-	SetColumnsName(names []string)
+	SetColumnsType(types []int)
+
+	GetColumnTypeAt(idx int) (int, error)
+	SetColumnTypeAt(idx, tipe int) error
+
 	GetColumnsName() []string
+	SetColumnsName(names []string)
 
 	AddColumn(tipe int, name string, vs []string)
 	GetColumn(idx int) *Column
+	GetColumnByName(name string) *Column
 	GetColumns() *Columns
 	SetColumns(*Columns)
-	GetColumnByName(name string) *Column
+
 	GetRow(idx int) *Row
 	GetRows() *Rows
 	SetRows(*Rows)
+
 	GetData() interface{}
-	GetDataAsRows() Rows
-	GetDataAsColumns() Columns
+	GetDataAsRows() *Rows
+	GetDataAsColumns() *Columns
+
 	TransposeToColumns()
 	TransposeToRows()
 
 	PushRow(r Row)
 	PushRowToColumns(r Row)
+	FillRowsWithColumn(colidx int, col Column)
 	PushColumn(col Column)
+	PushColumnToRows(col Column)
 
 	MergeColumns(DatasetInterface)
 	MergeRows(DatasetInterface)
@@ -383,6 +395,45 @@ func RandomPickColumns(dataset DatasetInterface, n int, dup bool,
 	case DatasetModeMatrix, DatasetNoMode:
 		picked.TransposeToRows()
 		unpicked.TransposeToRows()
+	}
+
+	return
+}
+
+/*
+SelectColumnsByIdx return new dataset with selected column index.
+*/
+func SelectColumnsByIdx(dataset DatasetInterface, colsIdx []int) (
+	newset DatasetInterface,
+) {
+	var col *Column
+
+	orgmode := dataset.GetMode()
+
+	if orgmode == DatasetModeRows {
+		dataset.TransposeToColumns()
+	}
+
+	newset = dataset.Clone().(DatasetInterface)
+
+	for _, idx := range colsIdx {
+		col = dataset.GetColumn(idx)
+		if col == nil {
+			continue
+		}
+
+		newset.PushColumn(*col)
+	}
+
+	// revert the mode back
+	switch orgmode {
+	case DatasetModeRows:
+		dataset.TransposeToRows()
+		newset.TransposeToRows()
+	case DatasetModeColumns:
+		// do nothing
+	case DatasetModeMatrix:
+		// do nothing
 	}
 
 	return

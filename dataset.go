@@ -6,7 +6,6 @@ package tabula
 
 import (
 	"errors"
-	"fmt"
 	"math"
 )
 
@@ -58,6 +57,21 @@ func NewDataset(mode int, types []int, names []string) (
 }
 
 /*
+Init will set the dataset using mode and types.
+*/
+func (dataset *Dataset) Init(mode int, types []int, names []string) {
+	if types == nil {
+		dataset.Columns = make(Columns, 0)
+	} else {
+		dataset.Columns = make(Columns, len(types))
+		dataset.Columns.SetTypes(types)
+	}
+
+	dataset.SetColumnsName(names)
+	dataset.SetMode(mode)
+}
+
+/*
 Clone return a copy of current dataset.
 */
 func (dataset *Dataset) Clone() DatasetInterface {
@@ -73,21 +87,6 @@ func (dataset *Dataset) Clone() DatasetInterface {
 	}
 
 	return clone
-}
-
-/*
-Init will set the dataset using mode and types.
-*/
-func (dataset *Dataset) Init(mode int, types []int, names []string) {
-	if types == nil {
-		dataset.Columns = make(Columns, 0)
-	} else {
-		dataset.Columns = make(Columns, len(types))
-		dataset.Columns.SetTypes(types)
-	}
-
-	dataset.SetColumnsName(names)
-	dataset.SetMode(mode)
 }
 
 /*
@@ -175,11 +174,57 @@ func (dataset *Dataset) Len() int {
 }
 
 /*
+GetColumnsType return the type of all columns.
+*/
+func (dataset *Dataset) GetColumnsType() (types []int) {
+	for x := range dataset.Columns {
+		types = append(types, dataset.Columns[x].Type)
+	}
+
+	return
+}
+
+/*
 SetColumnsType of data in all columns.
 */
 func (dataset *Dataset) SetColumnsType(types []int) {
 	dataset.Columns = make(Columns, len(types))
 	dataset.Columns.SetTypes(types)
+}
+
+/*
+GetColumnTypeAt return type of column in index `colidx` in
+dataset.
+*/
+func (dataset *Dataset) GetColumnTypeAt(idx int) (int, error) {
+	if idx >= dataset.GetNColumn() {
+		return TUndefined, ErrColIdxOutOfRange
+	}
+
+	return dataset.Columns[idx].Type, nil
+}
+
+/*
+SetColumnTypeAt will set column type at index `colidx` to `tipe`.
+*/
+func (dataset *Dataset) SetColumnTypeAt(idx, tipe int) error {
+	if idx >= dataset.GetNColumn() {
+		return ErrColIdxOutOfRange
+	}
+
+	dataset.Columns[idx].Type = tipe
+	return nil
+}
+
+/*
+GetColumnsName return name of all columns.
+*/
+func (dataset *Dataset) GetColumnsName() (names []string) {
+	for x := range dataset.Columns {
+		names = append(names, dataset.Columns[x].Name)
+	}
+
+	return
 }
 
 /*
@@ -211,60 +256,6 @@ func (dataset *Dataset) SetColumnsName(names []string) {
 	}
 
 	return
-}
-
-/*
-GetColumnsName return name of all columns.
-*/
-func (dataset *Dataset) GetColumnsName() (names []string) {
-	for x := range dataset.Columns {
-		names = append(names, dataset.Columns[x].Name)
-	}
-
-	return
-}
-
-/*
-GetColumnsType return the type of all columns.
-*/
-func (dataset *Dataset) GetColumnsType() (types []int) {
-	for x := range dataset.Columns {
-		types = append(types, dataset.Columns[x].Type)
-	}
-
-	return
-}
-
-/*
-GetColumnsTypeByIdx get column type filtered by column index `colsIdx`.
-*/
-func (dataset *Dataset) GetColumnsTypeByIdx(colsIdx []int) (
-	types []int,
-	e error,
-) {
-	colslen := dataset.GetNColumn()
-
-	for _, v := range colsIdx {
-		if v >= colslen {
-			return types, ErrMisColLength
-		}
-
-		types = append(types, dataset.Columns[v].Type)
-	}
-
-	return
-}
-
-/*
-GetColumnTypeAt return type of column in index `colidx` in
-dataset.
-*/
-func (dataset *Dataset) GetColumnTypeAt(colidx int) (int, error) {
-	if colidx >= dataset.GetNColumn() {
-		return TUndefined, ErrColIdxOutOfRange
-	}
-
-	return dataset.Columns[colidx].Type, nil
 }
 
 /*
@@ -302,20 +293,6 @@ func (dataset *Dataset) GetColumn(idx int) (col *Column) {
 }
 
 /*
-GetColumns return columns in dataset, without transposing.
-*/
-func (dataset *Dataset) GetColumns() *Columns {
-	return &dataset.Columns
-}
-
-/*
-SetColumns will replace current columns with new one from parameter.
-*/
-func (dataset *Dataset) SetColumns(cols *Columns) {
-	dataset.Columns = *cols
-}
-
-/*
 GetColumnByName return column based on their `name`.
 */
 func (dataset *Dataset) GetColumnByName(name string) (col *Column) {
@@ -330,6 +307,20 @@ func (dataset *Dataset) GetColumnByName(name string) (col *Column) {
 		}
 	}
 	return
+}
+
+/*
+GetColumns return columns in dataset, without transposing.
+*/
+func (dataset *Dataset) GetColumns() *Columns {
+	return &dataset.Columns
+}
+
+/*
+SetColumns will replace current columns with new one from parameter.
+*/
+func (dataset *Dataset) SetColumns(cols *Columns) {
+	dataset.Columns = *cols
 }
 
 /*
@@ -359,11 +350,11 @@ GetData return the data, based on mode (rows, columns, or matrix).
 func (dataset *Dataset) GetData() interface{} {
 	switch dataset.Mode {
 	case DatasetModeRows:
-		return dataset.Rows
+		return &dataset.Rows
 	case DatasetModeColumns:
-		return dataset.Columns
+		return &dataset.Columns
 	case DatasetModeMatrix, DatasetNoMode:
-		return Matrix{
+		return &Matrix{
 			Columns: &dataset.Columns,
 			Rows:    &dataset.Rows,
 		}
@@ -375,21 +366,21 @@ func (dataset *Dataset) GetData() interface{} {
 /*
 GetDataAsRows return data in rows mode.
 */
-func (dataset *Dataset) GetDataAsRows() Rows {
+func (dataset *Dataset) GetDataAsRows() *Rows {
 	if dataset.Mode == DatasetModeColumns {
 		dataset.TransposeToRows()
 	}
-	return dataset.Rows
+	return &dataset.Rows
 }
 
 /*
 GetDataAsColumns return data in columns mode.
 */
-func (dataset *Dataset) GetDataAsColumns() (columns Columns) {
+func (dataset *Dataset) GetDataAsColumns() (columns *Columns) {
 	if dataset.Mode == DatasetModeRows {
 		dataset.TransposeToColumns()
 	}
-	return dataset.Columns
+	return &dataset.Columns
 }
 
 /*
@@ -690,45 +681,6 @@ func (dataset *Dataset) PushColumnToRows(col Column) {
 }
 
 /*
-SelectColumnsByIdx return new dataset with selected column index.
-*/
-func (dataset *Dataset) SelectColumnsByIdx(colsIdx []int) (
-	newset Dataset,
-) {
-	var col *Column
-
-	orgmode := dataset.GetMode()
-
-	if orgmode == DatasetModeRows {
-		dataset.TransposeToColumns()
-	}
-
-	newset.Init(dataset.GetMode(), nil, nil)
-
-	for _, idx := range colsIdx {
-		col = dataset.GetColumn(idx)
-		if col == nil {
-			continue
-		}
-
-		newset.PushColumn(*col)
-	}
-
-	// revert the mode back
-	switch orgmode {
-	case DatasetModeRows:
-		dataset.TransposeToRows()
-		newset.TransposeToRows()
-	case DatasetModeColumns:
-		// do nothing
-	case DatasetModeMatrix:
-		// do nothing
-	}
-
-	return
-}
-
-/*
 MergeColumns append columns from other dataset into current dataset.
 */
 func (dataset *Dataset) MergeColumns(other DatasetInterface) {
@@ -738,7 +690,7 @@ func (dataset *Dataset) MergeColumns(other DatasetInterface) {
 	}
 
 	cols := other.GetDataAsColumns()
-	for _, col := range cols {
+	for _, col := range *cols {
 		dataset.PushColumn(col)
 	}
 
@@ -753,19 +705,7 @@ MergeRows append rows from other dataset into current dataset.
 */
 func (dataset *Dataset) MergeRows(other DatasetInterface) {
 	rows := other.GetDataAsRows()
-	for _, row := range rows {
+	for _, row := range *rows {
 		dataset.PushRow(row)
 	}
-}
-
-/*
-String pretty print the data.
-*/
-func (dataset Dataset) String() (s string) {
-	s = fmt.Sprintf("{\n"+
-		"\tMode   : %v\n"+
-		"\tRows   : %v\n"+
-		"\tColumns: %v\n"+
-		"}", dataset.Mode, dataset.Rows, dataset.Columns)
-	return
 }
