@@ -23,6 +23,19 @@ type Claset struct {
 }
 
 /*
+NewClaset create and return new Claset object.
+*/
+func NewClaset(mode int, types []int, names []string) (claset *Claset) {
+	claset = &Claset{
+		ClassIndex: -1,
+	}
+
+	claset.Init(mode, types, names)
+
+	return
+}
+
+/*
 Clone return a copy of current claset object.
 */
 func (claset *Claset) Clone() DatasetInterface {
