@@ -89,16 +89,16 @@ For example, given a table of data,
 
 * **Switching between rows and columns mode**.
 
-* [**Random pick rows with or without replacement**](https://godoc.org/github.com/shuLhan/tabula#Dataset.RandomPickRows).
+* [**Random pick rows with or without replacement**](https://godoc.org/github.com/shuLhan/tabula#RandomPickRows).
 
-* [**Random pick columns with or without replacement**](https://godoc.org/github.com/shuLhan/tabula#Dataset.RandomPickColumns).
+* [**Random pick columns with or without replacement**](https://godoc.org/github.com/shuLhan/tabula#RandomPickColumns).
 
-* [**Select column from dataset by index**](https://godoc.org/github.com/shuLhan/tabula#Dataset.SelectColumnsByIdx).
+* [**Select column from dataset by index**](https://godoc.org/github.com/shuLhan/tabula#SelectColumnsByIdx).
 
-* [**Sort columns by index**](https://godoc.org/github.com/shuLhan/tabula#Dataset.SortColumnsByIndex),
+* [**Sort columns by index**](https://godoc.org/github.com/shuLhan/tabula#SortColumnsByIndex),
   or indirect sort.
 
-* [**Split rows value by numeric**](https://godoc.org/github.com/shuLhan/tabula#Dataset.SplitRowsByNumeric).
+* [**Split rows value by numeric**](https://godoc.org/github.com/shuLhan/tabula#SplitRowsByNumeric).
   For example, given two numeric rows,
   ```
   A: {1,2,3,4}
@@ -115,7 +115,7 @@ For example, given a table of data,
   B'': {7,8}
   ```
 
-* [**Split rows by string**](https://godoc.org/github.com/shuLhan/tabula#Dataset.SplitRowsByCategorical).
+* [**Split rows by string**](https://godoc.org/github.com/shuLhan/tabula#SplitRowsByCategorical).
   For example, given two rows,
   ```
   X: [A,B,A,B,C,D,C,D]
@@ -133,7 +133,7 @@ For example, given a table of data,
 	Y'': [2,4,6,8]
   ```
 
-* [**Select row where**](https://godoc.org/github.com/shuLhan/tabula#Dataset.SelectRowsWhere).
+* [**Select row where**](https://godoc.org/github.com/shuLhan/tabula#SelectRowsWhere).
   Select row at column index x where their value is equal to y (an analogy to
   _select where_ in SQL).
   For example, given a rows of dataset,
