@@ -60,8 +60,8 @@ func NewDataset(mode int, types []int, names []string) (
 /*
 Clone return a copy of current dataset.
 */
-func (dataset *Dataset) Clone() (clone Dataset) {
-	clone.SetMode(dataset.GetMode())
+func (dataset *Dataset) Clone() DatasetInterface {
+	clone := NewDataset(dataset.GetMode(), nil, nil)
 
 	for _, col := range dataset.Columns {
 		newcol := Column{
@@ -71,7 +71,8 @@ func (dataset *Dataset) Clone() (clone Dataset) {
 		}
 		clone.PushColumn(newcol)
 	}
-	return
+
+	return clone
 }
 
 /*
@@ -301,6 +302,13 @@ func (dataset *Dataset) GetColumn(idx int) (col *Column) {
 }
 
 /*
+GetColumns return columns in dataset, without transposing.
+*/
+func (dataset *Dataset) GetColumns() *Columns {
+	return &dataset.Columns
+}
+
+/*
 GetColumnByName return column based on their `name`.
 */
 func (dataset *Dataset) GetColumnByName(name string) (col *Column) {
@@ -322,6 +330,13 @@ GetRow return row at index `idx`.
 */
 func (dataset *Dataset) GetRow(idx int) *Row {
 	return &dataset.Rows[idx]
+}
+
+/*
+GetRows return rows in dataset, without transposing.
+*/
+func (dataset *Dataset) GetRows() *Rows {
+	return &dataset.Rows
 }
 
 /*
@@ -671,8 +686,8 @@ or without replacement in machine learning domain.
 If output mode is columns, it will be transposed to rows.
 */
 func (dataset *Dataset) RandomPickRows(n int, duplicate bool) (
-	picked Dataset,
-	unpicked Dataset,
+	picked *Dataset,
+	unpicked *Dataset,
 	pickedIdx []int,
 	unpickedIdx []int,
 ) {
@@ -682,8 +697,8 @@ func (dataset *Dataset) RandomPickRows(n int, duplicate bool) (
 		dataset.TransposeToRows()
 	}
 
-	picked = dataset.Clone()
-	unpicked = dataset.Clone()
+	picked = dataset.Clone().(*Dataset)
+	unpicked = dataset.Clone().(*Dataset)
 
 	picked.Rows, unpicked.Rows, pickedIdx, unpickedIdx =
 		dataset.Rows.RandomPick(n, duplicate)
@@ -740,211 +755,6 @@ func (dataset *Dataset) RandomPickColumns(n int, dup bool, excludeIdx []int) (
 	case DatasetModeMatrix, DatasetNoMode:
 		picked.TransposeToRows()
 		unpicked.TransposeToRows()
-	}
-
-	return
-}
-
-/*
-SortColumnsByIndex will sort all columns using sorted index.
-*/
-func (dataset *Dataset) SortColumnsByIndex(sortedIdx []int) {
-	if dataset.Mode == DatasetModeRows {
-		dataset.TransposeToColumns()
-	}
-
-	for i, col := range (*dataset).Columns {
-		(*dataset).Columns[i].Records = col.Records.SortByIndex(
-			sortedIdx)
-	}
-}
-
-/*
-SplitRowsByNumeric will split the data using splitVal in column `colidx`.
-
-For example, given two continuous attribute,
-
-	A: {1,2,3,4}
-	B: {5,6,7,8}
-
-if colidx is (1) B and splitVal is 7, the data will splitted into left set
-
-	A': {1,2}
-	B': {5,6}
-
-and right set
-
-	A'': {3,4}
-	B'': {7,8}
-*/
-func (dataset *Dataset) SplitRowsByNumeric(colidx int, splitVal float64) (
-	splitLess Dataset,
-	splitGreater Dataset,
-	e error,
-) {
-	// check type of column
-	coltype, e := dataset.GetColumnTypeAt(colidx)
-	if e != nil {
-		return
-	}
-
-	if !(coltype == TInteger || coltype == TReal) {
-		return splitLess, splitGreater, ErrInvalidColType
-	}
-
-	// should we convert the data mode back?
-	orgmode := dataset.GetMode()
-
-	if orgmode == DatasetModeColumns {
-		dataset.TransposeToRows()
-	}
-
-	if DEBUG >= 2 {
-		fmt.Println("[tabula] dataset:", dataset)
-	}
-
-	splitLess = dataset.Clone()
-	splitGreater = dataset.Clone()
-
-	for _, row := range dataset.Rows {
-		if row[colidx].Float() < splitVal {
-			splitLess.PushRow(row)
-		} else {
-			splitGreater.PushRow(row)
-		}
-	}
-
-	if DEBUG >= 2 {
-		fmt.Println("[tabula] split less:", splitLess)
-		fmt.Println("[tabula] split greater:", splitGreater)
-	}
-
-	switch orgmode {
-	case DatasetModeColumns:
-		dataset.TransposeToColumns()
-		splitLess.TransposeToColumns()
-		splitGreater.TransposeToColumns()
-	case DatasetModeMatrix:
-		// do nothing, since its already filled when pushing new row.
-	}
-
-	return
-}
-
-/*
-SplitRowsByCategorical will split the data using a set of split value in column
-`colidx`.
-
-For example, given two attributes,
-
-	X: [A,B,A,B,C,D,C,D]
-	Y: [1,2,3,4,5,6,7,8]
-
-if colidx is (0) or A and split value is a set `[A,C]`, the data will splitted
-into left set which contain all rows that have A or C,
-
-	X': [A,A,C,C]
-	Y': [1,3,5,7]
-
-and the right set, excluded set, will contain all rows which is not A or C,
-
-	X'': [B,B,D,D]
-	Y'': [2,4,6,8]
-*/
-func (dataset *Dataset) SplitRowsByCategorical(colidx int, splitVal []string) (
-	splitIn Dataset,
-	splitEx Dataset,
-	e error,
-) {
-	// check type of column
-	coltype, e := dataset.GetColumnTypeAt(colidx)
-	if e != nil {
-		return
-	}
-
-	if coltype != TString {
-		return splitIn, splitEx, ErrInvalidColType
-	}
-
-	// should we convert the data mode back?
-	orgmode := dataset.GetMode()
-
-	if orgmode == DatasetModeColumns {
-		dataset.TransposeToRows()
-	}
-
-	splitIn = dataset.Clone()
-	splitEx = dataset.Clone()
-
-	found := false
-
-	for _, row := range dataset.Rows {
-		found = false
-		for _, val := range splitVal {
-			if row[colidx].String() == val {
-				splitIn.PushRow(row)
-				found = true
-				break
-			}
-		}
-		if !found {
-			splitEx.PushRow(row)
-		}
-	}
-
-	// convert all dataset based on original
-	switch orgmode {
-	case DatasetModeColumns:
-		dataset.TransposeToColumns()
-		splitIn.TransposeToColumns()
-		splitEx.TransposeToColumns()
-	case DatasetModeMatrix, DatasetNoMode:
-		splitIn.TransposeToColumns()
-		splitEx.TransposeToColumns()
-	}
-
-	return
-}
-
-/*
-SplitRowsByValue generic function to split data by value. This function will
-split data using value in column `colidx`. If value is numeric it will return
-any rows that have column value less than `value` in `splitL`, and any column
-value greater or equal to `value` in `splitR`.
-*/
-func (dataset *Dataset) SplitRowsByValue(colidx int, value interface{}) (
-	splitL Dataset,
-	splitR Dataset,
-	e error,
-) {
-	coltype, e := dataset.GetColumnTypeAt(colidx)
-	if e != nil {
-		return
-	}
-
-	if coltype == TString {
-		splitL, splitR, e = dataset.SplitRowsByCategorical(colidx,
-			value.([]string))
-	} else {
-		var splitval float64
-
-		switch value.(type) {
-		case int:
-			splitval = float64(value.(int))
-		case int64:
-			splitval = float64(value.(int64))
-		case float32:
-			splitval = float64(value.(float32))
-		case float64:
-			splitval = value.(float64)
-		}
-
-		splitL, splitR, e = dataset.SplitRowsByNumeric(colidx,
-			splitval)
-	}
-
-	if e != nil {
-		return Dataset{}, Dataset{}, e
 	}
 
 	return
@@ -1040,7 +850,7 @@ func (dataset *Dataset) MergeColumns(other DatasetInterface) {
 /*
 MergeRows append rows from other dataset into current dataset.
 */
-func (dataset *Dataset) MergeRows(other Dataset) {
+func (dataset *Dataset) MergeRows(other DatasetInterface) {
 	rows := other.GetDataAsRows()
 	for _, row := range rows {
 		dataset.PushRow(row)

@@ -101,7 +101,7 @@ func TestSplitRowsByNumeric(t *testing.T) {
 	dataset := createDataset(t)
 
 	// Split integer by float
-	splitL, splitR, e := dataset.SplitRowsByNumeric(0, 4.5)
+	splitL, splitR, e := tabula.SplitRowsByNumeric(dataset, 0, 4.5)
 	if e != nil {
 		t.Fatal(e)
 	}
@@ -119,7 +119,7 @@ func TestSplitRowsByNumeric(t *testing.T) {
 	assert.Equal(t, exp, got)
 
 	// Split by float
-	splitL, splitR, e = dataset.SplitRowsByNumeric(1, 1.8)
+	splitL, splitR, e = tabula.SplitRowsByNumeric(dataset, 1, 1.8)
 	if e != nil {
 		t.Fatal(e)
 	}
@@ -141,7 +141,8 @@ func TestSplitRowsByCategorical(t *testing.T) {
 	dataset := createDataset(t)
 	splitval := []string{"A", "D"}
 
-	splitL, splitR, e := dataset.SplitRowsByCategorical(2, splitval)
+	splitL, splitR, e := tabula.SplitRowsByCategorical(dataset, 2,
+		splitval)
 	if e != nil {
 		t.Fatal(e)
 	}
