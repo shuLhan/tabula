@@ -9,6 +9,13 @@ Row represent slice of record.
 */
 type Row []*Record
 
+//
+// Len return number of record in row.
+//
+func (row *Row) Len() int {
+	return len(*row)
+}
+
 /*
 PushBack will add new record to the end of row.
 */
@@ -62,4 +69,27 @@ SetValueAt will set the value of row at cell index `idx` with record `rec`.
 */
 func (row *Row) SetValueAt(idx int, rec *Record) {
 	(*row)[idx] = rec
+}
+
+//
+// GetValueAt return the value of row record at index `idx`. If the index is
+// out of range it will return nil and false
+//
+func (row *Row) GetValueAt(idx int) (interface{}, bool) {
+	if row.Len() < idx {
+		return nil, false
+	}
+	return (*row)[idx].Value(), true
+}
+
+//
+// GetIntAt return the integer value of row record at index `idx`.
+// If the index is out of range it will return 0 and false.
+//
+func (row *Row) GetIntAt(idx int) (int64, bool) {
+	if row.Len() <= idx {
+		return 0, false
+	}
+
+	return (*row)[idx].Integer(), true
 }
