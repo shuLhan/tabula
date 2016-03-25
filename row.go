@@ -76,7 +76,7 @@ func (row *Row) SetValueAt(idx int, rec *Record) {
 // out of range it will return nil and false
 //
 func (row *Row) GetValueAt(idx int) (interface{}, bool) {
-	if row.Len() < idx {
+	if row.Len() <= idx {
 		return nil, false
 	}
 	return (*row)[idx].Value(), true
