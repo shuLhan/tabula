@@ -42,6 +42,13 @@ func NewRecord(v string, t int) (r *Record, e error) {
 	return
 }
 
+//
+// NewRecordInt create new record from integer value.
+//
+func NewRecordInt(v int64) (r *Record) {
+	return &Record{V: v}
+}
+
 /*
 NewRecordReal create new record from float value.
 */
