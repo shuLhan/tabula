@@ -26,6 +26,7 @@ type ClasetInterface interface {
 	SetMajorityClass(string)
 	SetMinorityClass(string)
 
+	CountValueSpaces()
 	RecountMajorMinor()
 	IsInSingleClass() (bool, string)
 }

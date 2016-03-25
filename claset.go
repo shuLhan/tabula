@@ -6,6 +6,7 @@ package tabula
 
 import (
 	"github.com/shuLhan/tekstus"
+	"strconv"
 )
 
 /*
@@ -16,6 +17,12 @@ type Claset struct {
 	Dataset
 	// ClassIndex contain index for target classification in columns.
 	ClassIndex int `json:"ClassIndex"`
+
+	// vs contain a copy of value space.
+	vs []string
+	// counts number of value space in current set.
+	counts []int
+
 	// major contain the name of majority class in dataset.
 	major string
 	// minor contain the name of minority class in dataset.
@@ -131,23 +138,30 @@ func (claset *Claset) SetMinorityClass(v string) {
 	claset.minor = v
 }
 
-/*
-RecountMajorMinor recount major and minor class in claset.
-*/
-func (claset *Claset) RecountMajorMinor() {
+//
+// CountValueSpaces will count number of value space in current dataset.
+//
+func (claset *Claset) CountValueSpaces() {
 	classv := claset.GetClassAsStrings()
-	classvs := claset.GetClassValueSpace()
+	claset.vs = claset.GetClassValueSpace()
 
-	classCount := tekstus.WordsCountTokens(classv, classvs, false)
+	claset.counts = tekstus.WordsCountTokens(classv, claset.vs, false)
+}
 
-	_, maxIdx := tekstus.IntFindMax(classCount)
-	_, minIdx := tekstus.IntFindMin(classCount)
+//
+// RecountMajorMinor recount major and minor class in claset.
+//
+func (claset *Claset) RecountMajorMinor() {
+	claset.CountValueSpaces()
+
+	_, maxIdx := tekstus.IntFindMax(claset.counts)
+	_, minIdx := tekstus.IntFindMin(claset.counts)
 
 	if maxIdx >= 0 {
-		claset.major = classvs[maxIdx]
+		claset.major = claset.vs[maxIdx]
 	}
 	if minIdx >= 0 {
-		claset.minor = classvs[minIdx]
+		claset.minor = claset.vs[minIdx]
 	}
 }
 
@@ -169,5 +183,36 @@ func (claset *Claset) IsInSingleClass() (single bool, class string) {
 			return false, ""
 		}
 	}
+	return
+}
+
+//
+// String, yes it will pretty print the meta-data in JSON format.
+//
+func (claset *Claset) String() (s string) {
+	if claset.vs == nil {
+		claset.RecountMajorMinor()
+	}
+
+	s = `"claset": {
+	"rows"    : ` + strconv.Itoa(claset.Len()) + `
+,	"columns" : ` + strconv.Itoa(claset.GetNColumn()) + `
+,	"vs"      :{
+`
+
+	for x, v := range claset.vs {
+		if x > 0 {
+			s += "\t,"
+		} else {
+			s += "\t"
+		}
+		s += "\t\"" + v + "\"\t:" + strconv.Itoa(claset.counts[x]) + "\n"
+	}
+
+	s += `	}
+,	"major" :` + claset.major + `
+,	"minor" :` + claset.minor + `
+}`
+
 	return
 }
