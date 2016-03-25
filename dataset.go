@@ -116,12 +116,11 @@ func (dataset *Dataset) SetMode(mode int) {
 	case DatasetModeColumns:
 		dataset.Mode = DatasetModeColumns
 		dataset.Columns.Reset()
-	case DatasetModeMatrix, DatasetNoMode:
+	default:
 		dataset.Mode = DatasetModeMatrix
 		dataset.Rows = make(Rows, 0)
 		dataset.Columns.Reset()
 	}
-	dataset.Mode = mode
 }
 
 /*
@@ -323,10 +322,13 @@ func (dataset *Dataset) SetColumns(cols *Columns) {
 	dataset.Columns = *cols
 }
 
-/*
-GetRow return row at index `idx`.
-*/
+//
+// GetRow return pointer to row at index `idx` or nil if index is out of range.
+//
 func (dataset *Dataset) GetRow(idx int) *Row {
+	if dataset.Rows.Len() <= idx {
+		return nil
+	}
 	return &dataset.Rows[idx]
 }
 
