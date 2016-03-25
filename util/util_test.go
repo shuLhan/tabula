@@ -98,3 +98,11 @@ func TestSortFloatSliceByIndex(t *testing.T) {
 
 	assert.Equal(t, exp, got)
 }
+
+func TestIntCreateSequence(t *testing.T) {
+	exp := []int{3, 4, 5, 6, 7, 8}
+
+	got := util.IntCreateSequence(3, 8)
+
+	assert.Equal(t, exp, got)
+}

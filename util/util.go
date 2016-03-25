@@ -245,3 +245,16 @@ func GetRandomInteger(maxVal int, dup bool, pickedIdx []int, excIdx []int) (
 		return
 	}
 }
+
+//
+// IntCreateSequence will create and return sequence of integer from `min` to
+// `max` value.
+//
+// E.g. if min is 0 and max is 5 then it will return `[0 1 2 3 4 5]`.
+//
+func IntCreateSequence(min, max int64) (seq []int64) {
+	for ; min <= max; min++ {
+		seq = append(seq, min)
+	}
+	return
+}
