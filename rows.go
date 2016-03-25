@@ -16,6 +16,13 @@ Rows represent slice of Row.
 */
 type Rows []Row
 
+//
+// Len return number of row.
+//
+func (rows *Rows) Len() int {
+	return len(*rows)
+}
+
 /*
 PushBack append record r to the end of rows.
 */
