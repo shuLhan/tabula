@@ -64,6 +64,26 @@ func NewColumnString(data []string, colType int, colName string) (
 	return col, nil
 }
 
+//
+// NewColumnInt create new column with record type as integer, and fill it
+// with `data`.
+//
+func NewColumnInt(data []int64, colName string) (col *Column) {
+	col = NewColumn(TInteger, colName)
+
+	datalen := len(data)
+	if datalen <= 0 {
+		return
+	}
+
+	col.Records = make([]*Record, datalen)
+
+	for x, v := range data {
+		col.Records[x] = NewRecordInt(v)
+	}
+	return
+}
+
 /*
 NewColumnReal create new column with record type is real.
 */
