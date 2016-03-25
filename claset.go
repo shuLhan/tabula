@@ -187,6 +187,24 @@ func (claset *Claset) IsInSingleClass() (single bool, class string) {
 }
 
 //
+// GetMinorityRows return rows where their class is minority in dataset, or nil
+// if dataset is empty.
+//
+func (claset *Claset) GetMinorityRows() *Rows {
+	if claset.Len() == 0 {
+		return nil
+	}
+	if claset.vs == nil {
+		claset.RecountMajorMinor()
+	}
+
+	minRows := claset.GetRows().SelectWhere(claset.ClassIndex,
+		claset.minor)
+
+	return &minRows
+}
+
+//
 // String, yes it will pretty print the meta-data in JSON format.
 //
 func (claset *Claset) String() (s string) {

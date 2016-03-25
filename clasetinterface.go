@@ -29,4 +29,6 @@ type ClasetInterface interface {
 	CountValueSpaces()
 	RecountMajorMinor()
 	IsInSingleClass() (bool, string)
+
+	GetMinorityRows() *Rows
 }
