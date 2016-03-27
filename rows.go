@@ -213,7 +213,7 @@ to `colval`.
 func (rows *Rows) SelectWhere(colidx int, colval string) (selected Rows) {
 	for _, row := range *rows {
 		col := row[colidx]
-		if col.IsEqual(colval) {
+		if col.IsEqualToString(colval) {
 			selected.PushBack(row)
 		}
 	}

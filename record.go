@@ -6,6 +6,7 @@ package tabula
 
 import (
 	"math"
+	"reflect"
 	"strconv"
 )
 
@@ -249,13 +250,21 @@ func (r *Record) Integer() (i64 int64) {
 	return
 }
 
-/*
-IsEqual compare record value with another. Return true if both value are match,
-otherwise return false.
-*/
-func (r *Record) IsEqual(v string) bool {
+//
+// IsEqualToString return true if string representation of record value is
+// equal to string `v`.
+//
+func (r *Record) IsEqualToString(v string) bool {
 	if r.String() == v {
 		return true
 	}
 	return false
+}
+
+//
+// IsEqual return true if interface type and value equal to record type and
+// value.
+//
+func (r *Record) IsEqual(v interface{}) bool {
+	return reflect.DeepEqual(r.V, v)
 }
