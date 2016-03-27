@@ -16,6 +16,7 @@ type ClasetInterface interface {
 
 	GetClassValueSpace() []string
 	GetClassColumn() *Column
+	GetClassRecords() *Records
 	GetClassAsStrings() []string
 	GetClassIndex() int
 	MajorityClass() string

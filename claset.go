@@ -62,6 +62,13 @@ func (claset *Claset) GetDataset() DatasetInterface {
 	return &claset.Dataset
 }
 
+//
+// GetClassType return type of class in dataset.
+//
+func (claset *Claset) GetClassType() int {
+	return claset.Columns[claset.ClassIndex].Type
+}
+
 /*
 GetClassValueSpace return the class value space.
 */
@@ -77,6 +84,16 @@ func (claset *Claset) GetClassColumn() *Column {
 		claset.TransposeToColumns()
 	}
 	return &claset.Columns[claset.ClassIndex]
+}
+
+//
+// GetClassRecords return class values as records.
+//
+func (claset *Claset) GetClassRecords() *Records {
+	if claset.Mode == DatasetModeRows {
+		claset.TransposeToColumns()
+	}
+	return &claset.Columns[claset.ClassIndex].Records
 }
 
 /*
