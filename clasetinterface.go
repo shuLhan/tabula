@@ -14,6 +14,7 @@ minimize typo.
 type ClasetInterface interface {
 	DatasetInterface
 
+	GetClassType() int
 	GetClassValueSpace() []string
 	GetClassColumn() *Column
 	GetClassRecords() *Records
