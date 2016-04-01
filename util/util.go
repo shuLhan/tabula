@@ -9,6 +9,8 @@ package util
 
 import (
 	"math/rand"
+	"os"
+	"strconv"
 	"time"
 )
 
@@ -17,6 +19,20 @@ const (
 	// insertion sort will be used to replace the sort.
 	SortThreshold = 7
 )
+
+var (
+	// DEBUG level, can be set from environment using TABULA_UTIL_DEBUG.
+	DEBUG = 0
+)
+
+func init() {
+	v := os.Getenv("TABULA_UTIL_DEBUG")
+	if v == "" {
+		DEBUG = 0
+	} else {
+		DEBUG, _ = strconv.Atoi(v)
+	}
+}
 
 /*
 InsertionSortFloat64 will sort the data using insertion-sort algorithm.
@@ -71,68 +87,138 @@ func SwapString(data []string, i, j int) {
 	data[j] = tmp
 }
 
-/*
-MergesortFloat64 sort the slice of float from `l` to `r` using mergesort
-algorithm, return the sorted index.
-*/
-func MergesortFloat64(data []float64, sortedIdx []int, l, r int) {
+//
+// InplaceMergesortFloat64 in-place merge-sort without memory allocation.
+//
+// Algorithm,
+//
+// (0) If data length == Threshold, then
+// (0.1) use insertion sort.
+// (1) Divide into left and right.
+// (2) Sort left.
+// (3) Sort right.
+// (4) Merge sorted left and right.
+// (4.1) If the last element of the left is lower then the first element of the
+//       right, i.e. [1 2] [3 4]; no merging needed, return immediately.
+// (4.2) Let x be the first index of left-side, and y be the first index of
+//       the right-side.
+// (4.3) Loop until either x or y reached the maximum slice.
+// (4.3.1) IF DATA[x] <= DATA[y]
+// (4.3.1.1) INCREMENT x
+// (4.3.1.2) IF x > y THEN GOTO 4.3
+// (4.3.1.3) GOTO 4.3.4
+// (4.3.2) LET YLAST := the next DATA[y] that is less DATA[x]
+// (4.3.3) SWAP DATA, X, Y, YLAST
+// (4.3.4) LET Y := the next DATA that has minimum value between x and r
+//
+func InplaceMergesortFloat64(data []float64, idx []int, l, r int) {
+	// (0)
 	if l+SortThreshold >= r {
-		InsertionSortFloat64(data, sortedIdx, l, r)
+		// (0.1)
+		InsertionSortFloat64(data, idx, l, r)
 		return
 	}
 
+	// (1)
 	res := (r + l) % 2
 	c := (r + l) / 2
 	if res == 1 {
 		c++
 	}
 
-	MergesortFloat64(data, sortedIdx, l, c)
-	MergesortFloat64(data, sortedIdx, c, r)
+	// (2)
+	InplaceMergesortFloat64(data, idx, l, c)
 
-	// merging
-	if data[c-1] < data[c] {
-		// the last element of the left is lower then the first element
-		// of the right, i.e. [1 2] [3 4].
+	// (3)
+	InplaceMergesortFloat64(data, idx, c, r)
+
+	// (4)
+	if data[c-1] <= data[c] {
+		// (4.1)
 		return
 	}
 
-	datalen := r - l
-	newdata := make([]float64, datalen)
-	newidx := make([]int, datalen)
-
+	// (4.2)
 	x := l
 	y := c
-	z := 0
-	for ; x < c && y < r; z++ {
+	ylast := c
+
+	// (4.3)
+	for x < r && y < r {
+		// (4.3.1)
 		if data[x] <= data[y] {
-			newdata[z] = data[x]
-			newidx[z] = sortedIdx[x]
 			x++
-		} else {
-			newdata[z] = data[y]
-			newidx[z] = sortedIdx[y]
-			y++
+
+			// (4.3.1.2)
+			if x >= y {
+				goto next
+			}
+
+			// (4.3.1.3)
+			continue
+		}
+
+		// (4.3.2)
+		ylast = movey(data, x, y, r)
+
+		// (4.3.3)
+		ylast = multiswap(data, idx, x, y, ylast)
+
+	next:
+		// (4.3.4)
+		for x < r {
+			y = min(data, x, r)
+			if y == x {
+				x++
+			} else {
+				break
+			}
 		}
 	}
-	for ; x < c; x++ {
-		newdata[z] = data[x]
-		newidx[z] = sortedIdx[x]
-		z++
+}
+
+func movey(data []float64, x, y, r int) int {
+	yorg := y
+	y++
+	for y < r {
+		if data[y] >= data[x] {
+			break
+		}
+		if data[y] < data[yorg] {
+			break
+		}
+		y++
 	}
-	for ; y < r; y++ {
-		newdata[z] = data[y]
-		newidx[z] = sortedIdx[y]
-		z++
+	return y
+}
+
+func multiswap(data []float64, idx []int, x, y, ylast int) int {
+	for y < ylast {
+		SwapInt(idx, x, y)
+		SwapFloat64(data, x, y)
+		x++
+		y++
+		if y >= ylast {
+			return y
+		}
+		if data[x] <= data[y] {
+			return y
+		}
 	}
 
-	x = l
-	z = 0
-	for ; z < datalen; z++ {
-		data[x] = newdata[z]
-		sortedIdx[x] = newidx[z]
-		x++
+	return y
+}
+
+func min(data []float64, l, r int) (m int) {
+	min := data[l]
+	m = l
+	for l++; l < r; l++ {
+		if data[l] <= min {
+			min = data[l]
+			m = l
+		}
 	}
+	return
 }
 
 /*
@@ -146,7 +232,7 @@ func IndirectSortFloat64(data []float64) (sortedIdx []int) {
 		sortedIdx[i] = i
 	}
 
-	MergesortFloat64(data, sortedIdx, 0, datalen)
+	InplaceMergesortFloat64(data, sortedIdx, 0, datalen)
 
 	return
 }
