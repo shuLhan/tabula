@@ -93,3 +93,19 @@ func (row *Row) GetIntAt(idx int) (int64, bool) {
 
 	return (*row)[idx].Integer(), true
 }
+
+//
+// IsEqual return true if row content equal with `other` row, otherwise return
+// false.
+//
+func (row *Row) IsEqual(other *Row) bool {
+	if len(*row) != len(*other) {
+		return false
+	}
+	for x, xrec := range *row {
+		if !xrec.IsEqual((*other)[x].V) {
+			return false
+		}
+	}
+	return true
+}
