@@ -51,8 +51,8 @@ type DatasetInterface interface {
 	TransposeToColumns()
 	TransposeToRows()
 
-	PushRow(r Row)
-	PushRowToColumns(r Row)
+	PushRow(r *Row)
+	PushRowToColumns(r *Row)
 	FillRowsWithColumn(colidx int, col Column)
 	PushColumn(col Column)
 	PushColumnToRows(col Column)
@@ -137,8 +137,9 @@ func SplitRowsByNumeric(di DatasetInterface, colidx int, splitVal float64) (
 	splitLess = di.Clone()
 	splitGreater = di.Clone()
 
-	for _, row := range *di.GetRows() {
-		if row[colidx].Float() < splitVal {
+	rows := di.GetRows()
+	for _, row := range *rows {
+		if (*row)[colidx].Float() < splitVal {
 			splitLess.PushRow(row)
 		} else {
 			splitGreater.PushRow(row)
@@ -213,7 +214,7 @@ func SplitRowsByCategorical(di DatasetInterface, colidx int,
 	for _, row := range *di.GetRows() {
 		found = false
 		for _, val := range splitVal {
-			if row[colidx].String() == val {
+			if (*row)[colidx].String() == val {
 				splitIn.PushRow(row)
 				found = true
 				break

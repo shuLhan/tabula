@@ -138,7 +138,7 @@ func (dataset *Dataset) GetNColumn() (ncol int) {
 		if len(dataset.Rows) <= 0 {
 			return 0
 		}
-		return len(dataset.Rows[0])
+		return dataset.Rows[0].Len()
 	}
 
 	return
@@ -329,7 +329,7 @@ func (dataset *Dataset) GetRow(idx int) *Row {
 	if dataset.Rows.Len() <= idx {
 		return nil
 	}
-	return &dataset.Rows[idx]
+	return dataset.Rows[idx]
 }
 
 /*
@@ -433,7 +433,7 @@ func (dataset *Dataset) TransposeToColumns() {
 
 	for _, row := range dataset.Rows {
 		for y := 0; y < minlen; y++ {
-			dataset.Columns[y].PushBack(row[y])
+			dataset.Columns[y].PushBack((*row)[y])
 		}
 	}
 
@@ -488,7 +488,7 @@ func (dataset *Dataset) TransposeToRows() {
 			}
 		}
 
-		dataset.Rows = append(dataset.Rows, row)
+		dataset.Rows = append(dataset.Rows, &row)
 	}
 
 	// Only reset the columns if original dataset mode is "columns".
@@ -501,7 +501,7 @@ func (dataset *Dataset) TransposeToRows() {
 /*
 PushRow save the data, which is already in row object, to Rows.
 */
-func (dataset *Dataset) PushRow(row Row) {
+func (dataset *Dataset) PushRow(row *Row) {
 	switch dataset.GetMode() {
 	case DatasetModeRows:
 		dataset.Rows = append(dataset.Rows, row)
@@ -516,8 +516,8 @@ func (dataset *Dataset) PushRow(row Row) {
 /*
 PushRowToColumns push each data in Row to Columns.
 */
-func (dataset *Dataset) PushRowToColumns(row Row) {
-	rowlen := len(row)
+func (dataset *Dataset) PushRowToColumns(row *Row) {
+	rowlen := row.Len()
 	if rowlen <= 0 {
 		// return immediately if no data in row.
 		return
@@ -537,7 +537,7 @@ func (dataset *Dataset) PushRowToColumns(row Row) {
 	}
 
 	for x := 0; x < min; x++ {
-		dataset.Columns[x].PushBack(row[x])
+		dataset.Columns[x].PushBack((*row)[x])
 	}
 }
 
@@ -597,7 +597,7 @@ func (dataset *Dataset) FillRowsWithColumn(colIdx int, col Column) {
 			}
 		}
 
-		dataset.PushRow(row)
+		dataset.PushRow(&row)
 	}
 }
 
@@ -659,7 +659,8 @@ func (dataset *Dataset) PushColumnToRows(col Column) {
 		dataset.Rows = make(Rows, colsize)
 
 		for nrow = 0; nrow < colsize; nrow++ {
-			dataset.Rows[nrow] = make(Row, 0)
+			row := make(Row, 0)
+			dataset.Rows[nrow] = &row
 		}
 	}
 
@@ -675,7 +676,7 @@ func (dataset *Dataset) PushColumnToRows(col Column) {
 	var rec *Record
 
 	for x := 0; x < minrow; x++ {
-		row = &dataset.Rows[x]
+		row = dataset.Rows[x]
 		rec = col.Records[x]
 
 		row.PushBack(rec)

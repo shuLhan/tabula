@@ -7,14 +7,13 @@ package tabula
 import (
 	"fmt"
 	"math/rand"
-	"reflect"
 	"time"
 )
 
 /*
 Rows represent slice of Row.
 */
-type Rows []Row
+type Rows []*Row
 
 //
 // Len return number of row.
@@ -26,7 +25,7 @@ func (rows *Rows) Len() int {
 /*
 PushBack append record r to the end of rows.
 */
-func (rows *Rows) PushBack(r Row) {
+func (rows *Rows) PushBack(r *Row) {
 	if r != nil {
 		(*rows) = append((*rows), r)
 	}
@@ -35,7 +34,7 @@ func (rows *Rows) PushBack(r Row) {
 /*
 PopFront remove the head, return the record value.
 */
-func (rows *Rows) PopFront() (row Row) {
+func (rows *Rows) PopFront() (row *Row) {
 	l := len(*rows)
 	if l > 0 {
 		row = (*rows)[0]
@@ -85,7 +84,7 @@ func (rows *Rows) GroupByValue(GroupIdx int) (mapRows MapRows) {
 			break
 		}
 
-		key := fmt.Sprint(row[GroupIdx])
+		key := fmt.Sprint((*row)[GroupIdx])
 
 		mapRows.AddRow(key, row)
 	}
@@ -171,9 +170,9 @@ func (rows *Rows) RandomPick(n int, duplicate bool) (
 Contain return true and index of row, if rows has data that has the same value
 with `row`, otherwise return false and -1 as index.
 */
-func (rows *Rows) Contain(xrow Row) (bool, int) {
+func (rows *Rows) Contain(xrow *Row) (bool, int) {
 	for x, row := range *rows {
-		if reflect.DeepEqual(row, xrow) {
+		if xrow.IsEqual(row) {
 			return true, x
 		}
 	}
@@ -212,7 +211,7 @@ to `colval`.
 */
 func (rows *Rows) SelectWhere(colidx int, colval string) (selected Rows) {
 	for _, row := range *rows {
-		col := row[colidx]
+		col := (*row)[colidx]
 		if col.IsEqualToString(colval) {
 			selected.PushBack(row)
 		}
@@ -221,7 +220,7 @@ func (rows *Rows) SelectWhere(colidx int, colval string) (selected Rows) {
 }
 
 /*
-String return the string representation of each row separated by new line.
+String return the string representation of each row.
 */
 func (rows Rows) String() (s string) {
 	for x := range rows {

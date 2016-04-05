@@ -38,21 +38,22 @@ var datasetTypes = []int{
 
 var datasetNames = []string{"int", "real", "string"}
 
-func populateWithRows(t *testing.T, dataset *tabula.Dataset) {
+func populateWithRows(dataset *tabula.Dataset) error {
 	for _, rowin := range datasetRows {
 		row := make(tabula.Row, len(rowin))
 
 		for x, recin := range rowin {
 			rec, e := tabula.NewRecord(recin, datasetTypes[x])
 			if e != nil {
-				t.Fatal(e)
+				return e
 			}
 
 			row[x] = rec
 		}
 
-		dataset.PushRow(row)
+		dataset.PushRow(&row)
 	}
+	return nil
 }
 
 func populateWithColumns(t *testing.T, dataset *tabula.Dataset) {
@@ -71,21 +72,24 @@ func createDataset(t *testing.T) (dataset *tabula.Dataset) {
 	dataset = tabula.NewDataset(tabula.DatasetModeRows, datasetTypes,
 		datasetNames)
 
-	populateWithRows(t, dataset)
+	e := populateWithRows(dataset)
+	if e != nil {
+		t.Fatal(e)
+	}
 
 	return
 }
 
 func DatasetStringJoinByIndex(t *testing.T, dataset [][]string, indis []int) (res string) {
 	for x := range indis {
-		res += fmt.Sprint(dataset[indis[x]])
+		res += fmt.Sprint("&", dataset[indis[x]])
 	}
 	return res
 }
 
 func DatasetRowsJoin(t *testing.T) (s string) {
 	for x := range datasetRows {
-		s += fmt.Sprint(datasetRows[x])
+		s += fmt.Sprint("&", datasetRows[x])
 	}
 	return
 }
@@ -108,7 +112,8 @@ func TestSplitRowsByNumeric(t *testing.T) {
 
 	expIdx := []int{0, 1, 2, 3, 4}
 	exp := DatasetStringJoinByIndex(t, datasetRows, expIdx)
-	got := fmt.Sprint(splitL.GetDataAsRows())
+	rows := splitL.GetDataAsRows()
+	got := fmt.Sprint(rows)
 
 	assert.Equal(t, exp, got)
 
@@ -234,7 +239,10 @@ func TestModeMatrixPushColumn(t *testing.T) {
 func TestModeRowsPushRows(t *testing.T) {
 	dataset := tabula.NewDataset(tabula.DatasetModeRows, nil, nil)
 
-	populateWithRows(t, dataset)
+	e := populateWithRows(dataset)
+	if e != nil {
+		t.Fatal(e)
+	}
 
 	exp := DatasetRowsJoin(t)
 	got := fmt.Sprint(dataset.Rows)
@@ -245,7 +253,10 @@ func TestModeRowsPushRows(t *testing.T) {
 func TestModeColumnsPushRows(t *testing.T) {
 	dataset := tabula.NewDataset(tabula.DatasetModeColumns, nil, nil)
 
-	populateWithRows(t, dataset)
+	e := populateWithRows(dataset)
+	if e != nil {
+		t.Fatal(e)
+	}
 
 	// check rows
 	exp := ""
@@ -266,7 +277,10 @@ func TestModeColumnsPushRows(t *testing.T) {
 func TestModeMatrixPushRows(t *testing.T) {
 	dataset := tabula.NewDataset(tabula.DatasetModeMatrix, nil, nil)
 
-	populateWithRows(t, dataset)
+	e := populateWithRows(dataset)
+	if e != nil {
+		t.Fatal(e)
+	}
 
 	exp := DatasetRowsJoin(t)
 	got := fmt.Sprint(dataset.Rows)
@@ -286,7 +300,10 @@ func TestModeMatrixPushRows(t *testing.T) {
 func TestSelectRowsWhere(t *testing.T) {
 	dataset := tabula.NewDataset(tabula.DatasetModeMatrix, nil, nil)
 
-	populateWithRows(t, dataset)
+	e := populateWithRows(dataset)
+	if e != nil {
+		t.Fatal(e)
+	}
 
 	// select all rows where the first column value is 9.
 	selected := tabula.SelectRowsWhere(dataset, 0, "9")
@@ -294,4 +311,15 @@ func TestSelectRowsWhere(t *testing.T) {
 	got := selected.GetRow(0)
 
 	assert.Equal(t, exp, got)
+}
+
+func BenchmarkPushRow(b *testing.B) {
+	dataset := tabula.NewDataset(tabula.DatasetModeRows, nil, nil)
+
+	for i := 0; i < b.N; i++ {
+		e := populateWithRows(dataset)
+		if e != nil {
+			b.Fatal(e)
+		}
+	}
 }

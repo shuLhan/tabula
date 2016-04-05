@@ -28,13 +28,13 @@ var rowsData = [][]string{
 var testClassIdx = 3
 
 var rowsExpect = []string{
-	"[1 5 9 +]",
-	"[2 6 0 -]",
-	"[3 7 1 -]",
-	"[4 8 2 +]",
+	"&[1 5 9 +]",
+	"&[2 6 0 -]",
+	"&[3 7 1 -]",
+	"&[4 8 2 +]",
 }
 
-var groupByExpect = "[{+ [1 5 9 +][4 8 2 +]} {- [2 6 0 -][3 7 1 -]}]"
+var groupByExpect = "[{+ &[1 5 9 +]&[4 8 2 +]} {- &[2 6 0 -]&[3 7 1 -]}]"
 
 func initRows() (rows tabula.Rows, e error) {
 	for i := range rowsData {
@@ -52,7 +52,7 @@ func initRows() (rows tabula.Rows, e error) {
 			row = append(row, rec)
 		}
 
-		rows.PushBack(row)
+		rows.PushBack(&row)
 	}
 	return rows, nil
 }

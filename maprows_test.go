@@ -19,9 +19,9 @@ func TestAddRow(t *testing.T) {
 		t.Fatal(e)
 	}
 
-	for r := range rows {
-		key := fmt.Sprint(rows[r][testClassIdx].Value())
-		mapRows.AddRow(key, rows[r])
+	for _, row := range rows {
+		key := fmt.Sprint((*row)[testClassIdx].Value())
+		mapRows.AddRow(key, row)
 	}
 
 	got := fmt.Sprint(mapRows)
@@ -37,9 +37,9 @@ func TestGetMinority(t *testing.T) {
 		t.Fatal(e)
 	}
 
-	for r := range rows {
-		key := fmt.Sprint(rows[r][testClassIdx].Value())
-		mapRows.AddRow(key, rows[r])
+	for _, row := range rows {
+		key := fmt.Sprint((*row)[testClassIdx].Value())
+		mapRows.AddRow(key, row)
 	}
 
 	// remove the first row in the first key, so we can make it minority.

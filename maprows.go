@@ -5,6 +5,7 @@
 package tabula
 
 import (
+	_ "fmt"
 	"math"
 )
 
@@ -24,7 +25,7 @@ type MapRows []MapRowsElement
 /*
 insertRow will insert a row `v` into map using key `k`.
 */
-func (mapRows *MapRows) insertRow(k string, v Row) {
+func (mapRows *MapRows) insertRow(k string, v *Row) {
 	rows := Rows{}
 	rows.PushBack(v)
 	el := MapRowsElement{k, rows}
@@ -35,7 +36,7 @@ func (mapRows *MapRows) insertRow(k string, v Row) {
 AddRow will append a row `v` into map value if they key `k` exist in map,
 otherwise it will insert a new map element.
 */
-func (mapRows *MapRows) AddRow(k string, v Row) {
+func (mapRows *MapRows) AddRow(k string, v *Row) {
 	for x := range *mapRows {
 		if (*mapRows)[x].Key == k {
 			(*mapRows)[x].Value.PushBack(v)
@@ -63,3 +64,18 @@ func (mapRows *MapRows) GetMinority() (keyMin string, valMin Rows) {
 	}
 	return
 }
+
+//
+// String return the string representation of data.
+//
+//func (mapRows *MapRows) String() (s string) {
+//	s = "["
+//	for x, maprow := range *mapRows {
+//		if x > 0 {
+//			s += " "
+//		}
+//		s += fmt.Sprintf("{%s %v}", maprow.Key, &maprow.Value)
+//	}
+//	s += "]"
+//	return
+//}

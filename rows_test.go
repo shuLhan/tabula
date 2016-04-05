@@ -61,7 +61,7 @@ func TestPopFront(t *testing.T) {
 	// empty rows
 	row := rows.PopFront()
 
-	exp := "[]"
+	exp := "<nil>"
 	got := fmt.Sprint(row)
 
 	assert.Equal(t, exp, got)
