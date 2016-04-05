@@ -19,6 +19,7 @@ type ClasetInterface interface {
 	GetClassColumn() *Column
 	GetClassRecords() *Records
 	GetClassAsStrings() []string
+	GetClassAsReals() []float64
 	GetClassIndex() int
 	MajorityClass() string
 	MinorityClass() string

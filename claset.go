@@ -106,6 +106,16 @@ func (claset *Claset) GetClassAsStrings() []string {
 	return claset.Columns[claset.ClassIndex].ToStringSlice()
 }
 
+//
+// GetClassAsReals return class record value as slice of float64.
+//
+func (claset *Claset) GetClassAsReals() []float64 {
+	if claset.Mode == DatasetModeRows {
+		claset.TransposeToColumns()
+	}
+	return claset.Columns[claset.ClassIndex].ToFloatSlice()
+}
+
 /*
 GetClassIndex return index of class attribute in dataset.
 */
