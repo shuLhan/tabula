@@ -256,7 +256,7 @@ func (col *Column) SetValueAt(idx int, v string) {
 	if col.Records.Len() <= idx {
 		return
 	}
-	col.Records[idx].SetValue(v, col.Type)
+	_ = col.Records[idx].SetValue(v, col.Type)
 }
 
 //
