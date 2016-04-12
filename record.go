@@ -103,7 +103,7 @@ func (r *Record) SetValue(v string, t int) error {
 /*
 SetString will set the record content with string value.
 */
-func (r *Record) SetString(v float64) {
+func (r *Record) SetString(v string) {
 	r.V = v
 }
 
