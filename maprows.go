@@ -5,7 +5,6 @@
 package tabula
 
 import (
-	_ "fmt"
 	"math"
 )
 
@@ -64,18 +63,3 @@ func (mapRows *MapRows) GetMinority() (keyMin string, valMin Rows) {
 	}
 	return
 }
-
-//
-// String return the string representation of data.
-//
-//func (mapRows *MapRows) String() (s string) {
-//	s = "["
-//	for x, maprow := range *mapRows {
-//		if x > 0 {
-//			s += " "
-//		}
-//		s += fmt.Sprintf("{%s %v}", maprow.Key, &maprow.Value)
-//	}
-//	s += "]"
-//	return
-//}
