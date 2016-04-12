@@ -4,6 +4,10 @@
 
 package tabula
 
+import (
+	"strconv"
+)
+
 /*
 Column represent slice of record. A vertical representation of data.
 */
@@ -177,6 +181,19 @@ func (col *Column) PushRecords(rs []*Record) {
 	col.Records = append(col.Records, rs...)
 }
 
+//
+// ToIntegers convert slice of record to slice of int64.
+//
+func (col *Column) ToIntegers() []int64 {
+	newcol := make([]int64, col.Len())
+
+	for x := range col.Records {
+		newcol[x] = col.Records[x].Integer()
+	}
+
+	return newcol
+}
+
 /*
 ToFloatSlice convert slice of record to slice of float64.
 */
@@ -225,6 +242,41 @@ func (col *Column) ClearValues() {
 
 	for i := range col.Records {
 		col.Records[i].V = v
+	}
+}
+
+//
+// SetValueAt will set column value at cell `idx` with `v`, unless the index
+// is out of range.
+//
+func (col *Column) SetValueAt(idx int, v string) {
+	if idx < 0 {
+		return
+	}
+	if col.Records.Len() <= idx {
+		return
+	}
+	col.Records[idx].SetValue(v, col.Type)
+}
+
+//
+// SetValueByNumericAt will set column value at cell `idx` with numeric value
+// `v`, unless the index is out of range.
+//
+func (col *Column) SetValueByNumericAt(idx int, v float64) {
+	if idx < 0 {
+		return
+	}
+	if col.Records.Len() <= idx {
+		return
+	}
+	switch col.Type {
+	case TString:
+		col.Records[idx].SetString(strconv.FormatFloat(v, 'f', -1, 64))
+	case TInteger:
+		col.Records[idx].SetInteger(int64(v))
+	case TReal:
+		col.Records[idx].SetFloat(v)
 	}
 }
 
