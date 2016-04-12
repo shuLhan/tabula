@@ -10,6 +10,13 @@ Records define slice of pointer to Record.
 type Records []*Record
 
 //
+// Len will return the length of records.
+//
+func (recs *Records) Len() int {
+	return len(*recs)
+}
+
+//
 // SortByIndex will sort the records using slice of index `sortedIDx` and
 // return it.
 //
