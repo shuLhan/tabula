@@ -20,7 +20,7 @@ func TestAddRow(t *testing.T) {
 	}
 
 	for _, row := range rows {
-		key := fmt.Sprint((*row)[testClassIdx].Value())
+		key := fmt.Sprint((*row)[testClassIdx].Interface())
 		mapRows.AddRow(key, row)
 	}
 
@@ -38,7 +38,7 @@ func TestGetMinority(t *testing.T) {
 	}
 
 	for _, row := range rows {
-		key := fmt.Sprint((*row)[testClassIdx].Value())
+		key := fmt.Sprint((*row)[testClassIdx].Interface())
 		mapRows.AddRow(key, row)
 	}
 

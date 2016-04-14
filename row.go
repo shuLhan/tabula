@@ -77,7 +77,7 @@ func (row *Row) GetValueAt(idx int) (interface{}, bool) {
 	if row.Len() <= idx {
 		return nil, false
 	}
-	return (*row)[idx].Value(), true
+	return (*row)[idx].Interface(), true
 }
 
 //

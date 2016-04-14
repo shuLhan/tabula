@@ -147,20 +147,6 @@ func (r *Record) SetInteger(v int64) {
 }
 
 /*
-Value return value of record based on their type.
-*/
-func (r *Record) Value() interface{} {
-	switch r.v.(type) {
-	case int64:
-		return r.v.(int64)
-	case float64:
-		return r.v.(float64)
-	}
-
-	return r.v.(string)
-}
-
-/*
 ToByte convert record value to byte.
 */
 func (r *Record) ToByte() (b []byte) {
