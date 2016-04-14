@@ -326,7 +326,10 @@ func (dataset *Dataset) SetColumns(cols *Columns) {
 // GetRow return pointer to row at index `idx` or nil if index is out of range.
 //
 func (dataset *Dataset) GetRow(idx int) *Row {
-	if dataset.Rows.Len() <= idx {
+	if idx < 0 {
+		return nil
+	}
+	if idx >= dataset.Rows.Len() {
 		return nil
 	}
 	return dataset.Rows[idx]
