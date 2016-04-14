@@ -40,11 +40,7 @@ func (row *Row) Clone() *Row {
 	clone := make(Row, len(*row))
 
 	for x, rec := range *row {
-		newrec := &Record{
-			V: rec.V,
-		}
-
-		clone[x] = newrec
+		clone[x] = rec.Clone()
 	}
 	return &clone
 }
@@ -54,16 +50,16 @@ IsNilAt return true if there is no record value in row at `idx`, otherwise
 return false.
 */
 func (row *Row) IsNilAt(idx int) bool {
-	if len(*row) <= idx {
+	if idx < 0 {
+		return true
+	}
+	if idx >= len(*row) {
 		return true
 	}
 	if (*row)[idx] == nil {
 		return true
 	}
-	if (*row)[idx].V == nil {
-		return true
-	}
-	return false
+	return (*row)[idx].IsNil()
 }
 
 /*
@@ -105,7 +101,7 @@ func (row *Row) IsEqual(other *Row) bool {
 		return false
 	}
 	for x, xrec := range *row {
-		if !xrec.IsEqual((*other)[x].V) {
+		if !xrec.IsEqual((*other)[x]) {
 			return false
 		}
 	}

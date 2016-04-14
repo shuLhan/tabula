@@ -42,7 +42,7 @@ func initRows() (rows tabula.Rows, e error) {
 		row := make(tabula.Row, 0)
 
 		for j := 0; j < l; j++ {
-			rec, e := tabula.NewRecord(rowsData[i][j],
+			rec, e := tabula.NewRecordBy(rowsData[i][j],
 				testColTypes[j])
 
 			if nil != e {

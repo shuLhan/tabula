@@ -17,7 +17,7 @@ func TestToFloatSlice(t *testing.T) {
 	var col tabula.Column
 
 	for x := range data {
-		rec, e := tabula.NewRecord(data[x], tabula.TReal)
+		rec, e := tabula.NewRecordBy(data[x], tabula.TReal)
 		if e != nil {
 			t.Fatal(e)
 		}
@@ -34,7 +34,7 @@ func TestToStringSlice(t *testing.T) {
 	var col tabula.Column
 
 	for x := range data {
-		rec, e := tabula.NewRecord(data[x], tabula.TString)
+		rec, e := tabula.NewRecordBy(data[x], tabula.TString)
 		if e != nil {
 			t.Fatal(e)
 		}

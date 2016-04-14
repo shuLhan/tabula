@@ -21,7 +21,7 @@ func TestRecord(t *testing.T) {
 	row := make(tabula.Row, 0)
 
 	for i := range expec {
-		r, e := tabula.NewRecord(expec[i], expType[i])
+		r, e := tabula.NewRecordBy(expec[i], expType[i])
 		if nil != e {
 			t.Error(e)
 		}

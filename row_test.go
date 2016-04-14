@@ -14,8 +14,7 @@ var dataFloat64 = []float64{0.1, 0.2, 0.3, 0.4, 0.5}
 
 func createRow() (row tabula.Row) {
 	for _, v := range dataFloat64 {
-		rec := &tabula.Record{V: v}
-		row.PushBack(rec)
+		row.PushBack(tabula.NewRecordReal(v))
 	}
 	return
 }

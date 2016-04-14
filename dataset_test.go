@@ -43,7 +43,7 @@ func populateWithRows(dataset *tabula.Dataset) error {
 		row := make(tabula.Row, len(rowin))
 
 		for x, recin := range rowin {
-			rec, e := tabula.NewRecord(recin, datasetTypes[x])
+			rec, e := tabula.NewRecordBy(recin, datasetTypes[x])
 			if e != nil {
 				return e
 			}

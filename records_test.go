@@ -13,9 +13,9 @@ import (
 
 func TestSortByIndex(t *testing.T) {
 	data := make(tabula.Records, 3)
-	data[0], _ = tabula.NewRecord("3", tabula.TInteger)
-	data[1], _ = tabula.NewRecord("2", tabula.TInteger)
-	data[2], _ = tabula.NewRecord("1", tabula.TInteger)
+	data[0] = tabula.NewRecordInt(3)
+	data[1] = tabula.NewRecordInt(2)
+	data[2] = tabula.NewRecordInt(1)
 
 	sortedIdx := []int{2, 1, 0}
 	expect := []int{1, 2, 3}

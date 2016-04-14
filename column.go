@@ -58,11 +58,7 @@ func NewColumnString(data []string, colType int, colName string) (
 	col.Records = make([]*Record, datalen)
 
 	for x := 0; x < datalen; x++ {
-		rec, e := NewRecord(data[x], colType)
-		if e != nil {
-			return nil, e
-		}
-		col.Records[x] = rec
+		col.Records[x] = NewRecordString(data[x])
 	}
 
 	return col, nil
@@ -225,23 +221,8 @@ ClearValues set all value in column to empty string or zero if column type is
 numeric.
 */
 func (col *Column) ClearValues() {
-	if col.Len() <= 0 {
-		return
-	}
-
-	var v interface{}
-
-	switch col.Type {
-	case TString:
-		v = ""
-	case TInteger:
-		v = 0
-	case TReal:
-		v = 0.0
-	}
-
-	for i := range col.Records {
-		col.Records[i].V = v
+	for _, r := range col.Records {
+		r.Reset()
 	}
 }
 

@@ -487,7 +487,7 @@ func (dataset *Dataset) TransposeToRows() {
 			if dataset.Columns[f].Len() > r {
 				row[f] = dataset.Columns[f].Records[r]
 			} else {
-				row[f] = &Record{V: nil}
+				row[f] = NewRecord()
 			}
 		}
 
@@ -596,7 +596,7 @@ func (dataset *Dataset) FillRowsWithColumn(colIdx int, col Column) {
 			if z == colIdx {
 				row[colIdx] = col.Records[y]
 			} else {
-				row[z] = &Record{V: nil}
+				row[z] = NewRecord()
 			}
 		}
 

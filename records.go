@@ -35,7 +35,7 @@ func (recs *Records) SortByIndex(sortedIdx []int) *Records {
 //
 func (recs *Records) CountWhere(v interface{}) (c int) {
 	for _, r := range *recs {
-		if r.IsEqual(v) {
+		if r.IsEqualToInterface(v) {
 			c++
 		}
 	}

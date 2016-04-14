@@ -22,32 +22,40 @@ const (
 )
 
 /*
-Record represent the smallest building set of data-set.
+Record represent the smallest building block of data-set.
 */
 type Record struct {
-	V interface{}
+	v interface{}
 }
 
-/*
-NewRecord create new record from string with specific type.
-Return record object or error when fail to convert the byte to type.
-*/
-func NewRecord(v string, t int) (r *Record, e error) {
-	r = &Record{}
+//
+// NewRecord will create and return record with nil value.
+//
+func NewRecord() *Record {
+	return &Record{v: nil}
+}
 
+//
+// NewRecordBy create new record from string with type set to `t`.
+//
+func NewRecordBy(v string, t int) (r *Record, e error) {
+	r = NewRecord()
 	e = r.SetValue(v, t)
-	if e != nil {
-		return nil, e
-	}
-
 	return
+}
+
+//
+// NewRecordString will create new record from string.
+//
+func NewRecordString(v string) (r *Record) {
+	return &Record{v: v}
 }
 
 //
 // NewRecordInt create new record from integer value.
 //
 func NewRecordInt(v int64) (r *Record) {
-	return &Record{V: v}
+	return &Record{v: v}
 }
 
 /*
@@ -55,15 +63,32 @@ NewRecordReal create new record from float value.
 */
 func NewRecordReal(v float64) (r *Record) {
 	return &Record{
-		V: v,
+		v: v,
 	}
+}
+
+//
+// Clone will create and return a clone of record.
+//
+func (r *Record) Clone() *Record {
+	return &Record{v: r.v}
+}
+
+//
+// IsNil return true if record has not been set with value, or nil.
+//
+func (r *Record) IsNil() bool {
+	if r.v == nil {
+		return true
+	}
+	return false
 }
 
 /*
 GetType of record.
 */
 func (r *Record) GetType() int {
-	switch r.V.(type) {
+	switch r.v.(type) {
 	case int64:
 		return TInteger
 	case float64:
@@ -79,7 +104,7 @@ to type, it will return an error.
 func (r *Record) SetValue(v string, t int) error {
 	switch t {
 	case TString:
-		r.V = v
+		r.v = v
 
 	case TInteger:
 		i64, e := strconv.ParseInt(v, 10, 64)
@@ -87,7 +112,7 @@ func (r *Record) SetValue(v string, t int) error {
 			return e
 		}
 
-		r.V = i64
+		r.v = i64
 
 	case TReal:
 		f64, e := strconv.ParseFloat(v, 64)
@@ -95,7 +120,7 @@ func (r *Record) SetValue(v string, t int) error {
 			return e
 		}
 
-		r.V = f64
+		r.v = f64
 	}
 	return nil
 }
@@ -104,50 +129,50 @@ func (r *Record) SetValue(v string, t int) error {
 SetString will set the record content with string value.
 */
 func (r *Record) SetString(v string) {
-	r.V = v
+	r.v = v
 }
 
 /*
 SetFloat will set the record content with float 64bit.
 */
 func (r *Record) SetFloat(v float64) {
-	r.V = v
+	r.v = v
 }
 
 /*
 SetInteger will set the record value with integer 64bit.
 */
 func (r *Record) SetInteger(v int64) {
-	r.V = v
+	r.v = v
 }
 
 /*
 Value return value of record based on their type.
 */
 func (r *Record) Value() interface{} {
-	switch r.V.(type) {
+	switch r.v.(type) {
 	case int64:
-		return r.V.(int64)
+		return r.v.(int64)
 	case float64:
-		return r.V.(float64)
+		return r.v.(float64)
 	}
 
-	return r.V.(string)
+	return r.v.(string)
 }
 
 /*
 ToByte convert record value to byte.
 */
 func (r *Record) ToByte() (b []byte) {
-	switch r.V.(type) {
+	switch r.v.(type) {
 	case string:
-		b = []byte(r.V.(string))
+		b = []byte(r.v.(string))
 
 	case int64:
-		b = []byte(strconv.FormatInt(r.V.(int64), 10))
+		b = []byte(strconv.FormatInt(r.v.(int64), 10))
 
 	case float64:
-		b = []byte(strconv.FormatFloat(r.V.(float64), 'f', -1, 64))
+		b = []byte(strconv.FormatFloat(r.v.(float64), 'f', -1, 64))
 	}
 
 	return b
@@ -164,40 +189,47 @@ math.MinInt64.
 If its real the missing value is indicated by -Inf.
 */
 func (r *Record) IsMissingValue() bool {
-	switch r.V.(type) {
+	switch r.v.(type) {
 	case string:
-		str := r.V.(string)
+		str := r.v.(string)
 		if str == "?" {
 			return true
 		}
 
 	case int64:
-		i64 := r.V.(int64)
+		i64 := r.v.(int64)
 		if i64 == math.MinInt64 {
 			return true
 		}
 
 	case float64:
-		f64 := r.V.(float64)
+		f64 := r.v.(float64)
 		return math.IsInf(f64, -1)
 	}
 
 	return false
 }
 
+//
+// Interface return record value as interface.
+//
+func (r *Record) Interface() interface{} {
+	return r.v
+}
+
 /*
 String convert record value to string.
 */
 func (r Record) String() (s string) {
-	switch r.V.(type) {
+	switch r.v.(type) {
 	case string:
-		s = r.V.(string)
+		s = r.v.(string)
 
 	case int64:
-		s = strconv.FormatInt(r.V.(int64), 10)
+		s = strconv.FormatInt(r.v.(int64), 10)
 
 	case float64:
-		s = strconv.FormatFloat(r.V.(float64), 'f', -1, 64)
+		s = strconv.FormatFloat(r.v.(float64), 'f', -1, 64)
 	}
 	return
 }
@@ -208,19 +240,19 @@ Float convert given record to float value.
 func (r *Record) Float() (f64 float64) {
 	var e error
 
-	switch r.V.(type) {
+	switch r.v.(type) {
 	case string:
-		f64, e = strconv.ParseFloat(r.V.(string), 64)
+		f64, e = strconv.ParseFloat(r.v.(string), 64)
 
 		if nil != e {
 			f64 = math.Inf(-1)
 		}
 
 	case int64:
-		f64 = float64(r.V.(int64))
+		f64 = float64(r.v.(int64))
 
 	case float64:
-		f64 = r.V.(float64)
+		f64 = r.v.(float64)
 	}
 
 	return
@@ -232,22 +264,29 @@ Integer convert given record to integer value.
 func (r *Record) Integer() (i64 int64) {
 	var e error
 
-	switch r.V.(type) {
+	switch r.v.(type) {
 	case string:
-		i64, e = strconv.ParseInt(r.V.(string), 10, 64)
+		i64, e = strconv.ParseInt(r.v.(string), 10, 64)
 
 		if nil != e {
 			i64 = math.MinInt64
 		}
 
 	case int64:
-		i64 = r.V.(int64)
+		i64 = r.v.(int64)
 
 	case float64:
-		i64 = int64(r.V.(float64))
+		i64 = int64(r.v.(float64))
 	}
 
 	return
+}
+
+//
+// IsEqual return true if record is equal with other, otherwise return false.
+//
+func (r *Record) IsEqual(o *Record) bool {
+	return reflect.DeepEqual(r.v, o.Interface())
 }
 
 //
@@ -262,9 +301,21 @@ func (r *Record) IsEqualToString(v string) bool {
 }
 
 //
-// IsEqual return true if interface type and value equal to record type and
-// value.
+// IsEqualToInterface return true if interface type and value equal to record
+// type and value.
 //
-func (r *Record) IsEqual(v interface{}) bool {
-	return reflect.DeepEqual(r.V, v)
+func (r *Record) IsEqualToInterface(v interface{}) bool {
+	return reflect.DeepEqual(r.v, v)
+}
+
+//
+// Reset will reset record value to empty string or zero, depend on type.
+//
+func (r *Record) Reset() {
+	switch r.v.(type) {
+	case string:
+		r.v = ""
+	case int64, float64:
+		r.v = 0
+	}
 }
