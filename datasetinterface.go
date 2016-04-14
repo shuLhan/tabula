@@ -43,6 +43,7 @@ type DatasetInterface interface {
 	GetRow(idx int) *Row
 	GetRows() *Rows
 	SetRows(*Rows)
+	DeleteRow(idx int)
 
 	GetData() interface{}
 	GetDataAsRows() *Rows

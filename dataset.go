@@ -712,3 +712,26 @@ func (dataset *Dataset) MergeRows(other DatasetInterface) {
 		dataset.PushRow(row)
 	}
 }
+
+//
+// DeleteRow will delete row at index `i`.
+//
+func (dataset *Dataset) DeleteRow(i int) {
+	if i < 0 {
+		return
+	}
+	if i >= dataset.Rows.Len() {
+		return
+	}
+
+	orgmode := dataset.GetMode()
+	if orgmode == DatasetModeColumns {
+		dataset.TransposeToRows()
+	}
+
+	dataset.Rows.Del(i)
+
+	if orgmode == DatasetModeColumns {
+		dataset.TransposeToColumns()
+	}
+}
