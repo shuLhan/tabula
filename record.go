@@ -21,9 +21,9 @@ const (
 	TReal = 2
 )
 
-/*
-Record represent the smallest building block of data-set.
-*/
+//
+// Record represent the smallest building block of data-set.
+//
 type Record struct {
 	v interface{}
 }
@@ -147,24 +147,6 @@ func (r *Record) SetInteger(v int64) {
 }
 
 /*
-ToByte convert record value to byte.
-*/
-func (r *Record) ToByte() (b []byte) {
-	switch r.v.(type) {
-	case string:
-		b = []byte(r.v.(string))
-
-	case int64:
-		b = []byte(strconv.FormatInt(r.v.(int64), 10))
-
-	case float64:
-		b = []byte(strconv.FormatFloat(r.v.(float64), 'f', -1, 64))
-	}
-
-	return b
-}
-
-/*
 IsMissingValue check wether the value is a missing attribute.
 
 If its string the missing value is indicated by character '?'.
@@ -203,9 +185,16 @@ func (r *Record) Interface() interface{} {
 	return r.v
 }
 
-/*
-String convert record value to string.
-*/
+//
+// Bytes convert record value to slice of byte.
+//
+func (r *Record) Bytes() []byte {
+	return []byte(r.String())
+}
+
+//
+// String convert record value to string.
+//
 func (r Record) String() (s string) {
 	switch r.v.(type) {
 	case string:
