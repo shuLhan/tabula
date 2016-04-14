@@ -55,6 +55,23 @@ func (rows *Rows) PopFrontAsRows() (newRows Rows) {
 	return
 }
 
+//
+// Del will delete a row at index `i`.
+//
+func (rows *Rows) Del(i int) {
+	if i < 0 {
+		return
+	}
+	if i >= rows.Len() {
+		return
+	}
+
+	last := len(*rows) - 1
+	copy((*rows)[i:], (*rows)[i+1:])
+	(*rows)[last] = nil
+	(*rows) = (*rows)[0:last]
+}
+
 /*
 GroupByValue will group each row based on record value in index recGroupIdx
 into map of string -> *Row.

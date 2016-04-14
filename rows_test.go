@@ -161,3 +161,17 @@ func TestRandomPick(t *testing.T) {
 		}
 	}
 }
+
+func TestRowsDel(t *testing.T) {
+	rows, e := initRows()
+	if e != nil {
+		t.Fatal(e)
+	}
+
+	rows.Del(0)
+
+	exp := strings.Join(rowsExpect[1:], "")
+	got := fmt.Sprint(rows)
+
+	assert.Equal(t, exp, got)
+}
