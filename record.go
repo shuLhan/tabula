@@ -58,13 +58,11 @@ func NewRecordInt(v int64) (r *Record) {
 	return &Record{v: v}
 }
 
-/*
-NewRecordReal create new record from float value.
-*/
+//
+// NewRecordReal create new record from float value.
+//
 func NewRecordReal(v float64) (r *Record) {
-	return &Record{
-		v: v,
-	}
+	return &Record{v: v}
 }
 
 //
@@ -97,10 +95,10 @@ func (r *Record) Type() int {
 	return TString
 }
 
-/*
-SetValue set the record values from string. If value can not be converted
-to type, it will return an error.
-*/
+//
+// SetValue set the record value from string using type `t`. If value can not
+// be converted to type, it will return an error.
+//
 func (r *Record) SetValue(v string, t int) error {
 	switch t {
 	case TString:
@@ -125,37 +123,37 @@ func (r *Record) SetValue(v string, t int) error {
 	return nil
 }
 
-/*
-SetString will set the record content with string value.
-*/
+//
+// SetString will set the record value with string value.
+//
 func (r *Record) SetString(v string) {
 	r.v = v
 }
 
-/*
-SetFloat will set the record content with float 64bit.
-*/
+//
+// SetFloat will set the record value with float 64bit.
+//
 func (r *Record) SetFloat(v float64) {
 	r.v = v
 }
 
-/*
-SetInteger will set the record value with integer 64bit.
-*/
+//
+// SetInteger will set the record value with integer 64bit.
+//
 func (r *Record) SetInteger(v int64) {
 	r.v = v
 }
 
-/*
-IsMissingValue check wether the value is a missing attribute.
-
-If its string the missing value is indicated by character '?'.
-
-If its integer the missing value is indicated by minimum negative integer, or
-math.MinInt64.
-
-If its real the missing value is indicated by -Inf.
-*/
+//
+// IsMissingValue check wether the value is a missing attribute.
+//
+// If its string the missing value is indicated by character '?'.
+//
+// If its integer the missing value is indicated by minimum negative integer,
+// or math.MinInt64.
+//
+// If its real the missing value is indicated by -Inf.
+//
 func (r *Record) IsMissingValue() bool {
 	switch r.v.(type) {
 	case string:
@@ -209,9 +207,10 @@ func (r Record) String() (s string) {
 	return
 }
 
-/*
-Float convert given record to float value.
-*/
+//
+// Float convert given record to float value. If its failed it will return
+// the -Infinity value.
+//
 func (r *Record) Float() (f64 float64) {
 	var e error
 
@@ -233,9 +232,10 @@ func (r *Record) Float() (f64 float64) {
 	return
 }
 
-/*
-Integer convert given record to integer value.
-*/
+//
+// Integer convert given record to integer value. If its failed, it will return
+// the minimum integer in 64bit.
+//
 func (r *Record) Integer() (i64 int64) {
 	var e error
 
@@ -290,7 +290,9 @@ func (r *Record) Reset() {
 	switch r.v.(type) {
 	case string:
 		r.v = ""
-	case int64, float64:
-		r.v = 0
+	case int64:
+		r.v = int64(0)
+	case float64:
+		r.v = float64(0)
 	}
 }
