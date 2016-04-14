@@ -33,18 +33,20 @@ func (row *Row) GetTypes() (types []int) {
 	return
 }
 
-/*
-Clone create and return a clone of row.
-*/
-func (row *Row) Clone() (clone Row) {
-	for _, rec := range *row {
+//
+// Clone create and return a clone of row.
+//
+func (row *Row) Clone() *Row {
+	clone := make(Row, len(*row))
+
+	for x, rec := range *row {
 		newrec := &Record{
 			V: rec.V,
 		}
 
-		clone.PushBack(newrec)
+		clone[x] = newrec
 	}
-	return
+	return &clone
 }
 
 /*

@@ -25,10 +25,10 @@ func TestClone(t *testing.T) {
 	rowClone := row.Clone()
 	rowClone2 := row.Clone()
 
-	assert.Equal(t, row, rowClone)
+	assert.Equal(t, &row, rowClone)
 
 	// changing the clone value should not change the original copy.
-	rowClone2[0].SetFloat(0)
-	assert.Equal(t, row, rowClone)
-	assert.NotEqual(t, row, rowClone2)
+	(*rowClone2)[0].SetFloat(0)
+	assert.Equal(t, &row, rowClone)
+	assert.NotEqual(t, &row, rowClone2)
 }
