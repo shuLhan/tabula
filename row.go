@@ -23,12 +23,12 @@ func (row *Row) PushBack(r *Record) {
 	*row = append(*row, r)
 }
 
-/*
-GetTypes return type of all records.
-*/
-func (row *Row) GetTypes() (types []int) {
+//
+// Types return type of all records.
+//
+func (row *Row) Types() (types []int) {
 	for _, r := range *row {
-		types = append(types, r.GetType())
+		types = append(types, r.Type())
 	}
 	return
 }

@@ -84,10 +84,10 @@ func (r *Record) IsNil() bool {
 	return false
 }
 
-/*
-GetType of record.
-*/
-func (r *Record) GetType() int {
+//
+// Type of record.
+//
+func (r *Record) Type() int {
 	switch r.v.(type) {
 	case int64:
 		return TInteger

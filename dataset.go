@@ -402,7 +402,7 @@ func (dataset *Dataset) TransposeToColumns() {
 	if ncol <= 0 {
 		// if no columns defined, initialize it using record type
 		// in the first row.
-		types := dataset.GetRow(0).GetTypes()
+		types := dataset.GetRow(0).Types()
 		dataset.SetColumnsType(types)
 		ncol = len(types)
 	}

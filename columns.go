@@ -130,7 +130,7 @@ func (cols *Columns) Join(row int, sep, esc []byte) (v []byte) {
 		rec := col.Records[row]
 		recV := rec.ToByte()
 
-		if rec.GetType() == TString {
+		if rec.Type() == TString {
 			recV, _ = tekstus.BytesEncapsulate(sep, recV, esc, nil)
 		}
 
