@@ -7,7 +7,6 @@ package tabula_test
 import (
 	"fmt"
 	"github.com/shuLhan/tabula"
-	"github.com/shuLhan/tabula/util/assert"
 	"testing"
 )
 
@@ -115,13 +114,13 @@ func TestSplitRowsByNumeric(t *testing.T) {
 	rows := splitL.GetDataAsRows()
 	got := fmt.Sprint(rows)
 
-	assert.Equal(t, exp, got)
+	assert(t, exp, got, true)
 
 	expIdx = []int{5, 6, 7, 8, 9}
 	exp = DatasetStringJoinByIndex(t, datasetRows, expIdx)
 	got = fmt.Sprint(splitR.GetDataAsRows())
 
-	assert.Equal(t, exp, got)
+	assert(t, exp, got, true)
 
 	// Split by float
 	splitL, splitR, e = tabula.SplitRowsByNumeric(dataset, 1, 1.8)
@@ -133,13 +132,13 @@ func TestSplitRowsByNumeric(t *testing.T) {
 	exp = DatasetStringJoinByIndex(t, datasetRows, expIdx)
 	got = fmt.Sprint(splitL.GetDataAsRows())
 
-	assert.Equal(t, exp, got)
+	assert(t, exp, got, true)
 
 	expIdx = []int{8, 9}
 	exp = DatasetStringJoinByIndex(t, datasetRows, expIdx)
 	got = fmt.Sprint(splitR.GetDataAsRows())
 
-	assert.Equal(t, exp, got)
+	assert(t, exp, got, true)
 }
 
 func TestSplitRowsByCategorical(t *testing.T) {
@@ -156,13 +155,13 @@ func TestSplitRowsByCategorical(t *testing.T) {
 	exp := DatasetStringJoinByIndex(t, datasetRows, expIdx)
 	got := fmt.Sprint(splitL.GetDataAsRows())
 
-	assert.Equal(t, exp, got)
+	assert(t, exp, got, true)
 
 	expIdx = []int{1, 3, 4, 6, 8, 9}
 	exp = DatasetStringJoinByIndex(t, datasetRows, expIdx)
 	got = fmt.Sprint(splitR.GetDataAsRows())
 
-	assert.Equal(t, exp, got)
+	assert(t, exp, got, true)
 }
 
 func TestModeColumnsPushColumn(t *testing.T) {
@@ -183,12 +182,12 @@ func TestModeColumnsPushColumn(t *testing.T) {
 		got += fmt.Sprint(dataset.Columns[x].Records)
 	}
 
-	assert.Equal(t, exp, got)
+	assert(t, exp, got, true)
 
 	// Check rows
 	exp = ""
 	got = fmt.Sprint(dataset.Rows)
-	assert.Equal(t, exp, got)
+	assert(t, exp, got, true)
 }
 
 func TestModeRowsPushColumn(t *testing.T) {
@@ -200,13 +199,13 @@ func TestModeRowsPushColumn(t *testing.T) {
 	exp := DatasetRowsJoin(t)
 	got := fmt.Sprint(dataset.Rows)
 
-	assert.Equal(t, exp, got)
+	assert(t, exp, got, true)
 
 	// Check columns
 	exp = "[{int 1 0 [] []} {real 2 0 [] []} {string 0 0 [] []}]"
 	got = fmt.Sprint(dataset.Columns)
 
-	assert.Equal(t, exp, got)
+	assert(t, exp, got, true)
 }
 
 func TestModeMatrixPushColumn(t *testing.T) {
@@ -227,13 +226,13 @@ func TestModeMatrixPushColumn(t *testing.T) {
 		got += fmt.Sprint(dataset.Columns[x].Records)
 	}
 
-	assert.Equal(t, exp, got)
+	assert(t, exp, got, true)
 
 	// Check rows
 	exp = DatasetRowsJoin(t)
 	got = fmt.Sprint(dataset.Rows)
 
-	assert.Equal(t, exp, got)
+	assert(t, exp, got, true)
 }
 
 func TestModeRowsPushRows(t *testing.T) {
@@ -247,7 +246,7 @@ func TestModeRowsPushRows(t *testing.T) {
 	exp := DatasetRowsJoin(t)
 	got := fmt.Sprint(dataset.Rows)
 
-	assert.Equal(t, exp, got)
+	assert(t, exp, got, true)
 }
 
 func TestModeColumnsPushRows(t *testing.T) {
@@ -262,7 +261,7 @@ func TestModeColumnsPushRows(t *testing.T) {
 	exp := ""
 	got := fmt.Sprint(dataset.Rows)
 
-	assert.Equal(t, exp, got)
+	assert(t, exp, got, true)
 
 	// check columns
 	exp = DatasetColumnsJoin(t)
@@ -271,7 +270,7 @@ func TestModeColumnsPushRows(t *testing.T) {
 		got += fmt.Sprint(dataset.Columns[x].Records)
 	}
 
-	assert.Equal(t, exp, got)
+	assert(t, exp, got, true)
 }
 
 func TestModeMatrixPushRows(t *testing.T) {
@@ -285,7 +284,7 @@ func TestModeMatrixPushRows(t *testing.T) {
 	exp := DatasetRowsJoin(t)
 	got := fmt.Sprint(dataset.Rows)
 
-	assert.Equal(t, exp, got)
+	assert(t, exp, got, true)
 
 	// check columns
 	exp = DatasetColumnsJoin(t)
@@ -294,7 +293,7 @@ func TestModeMatrixPushRows(t *testing.T) {
 		got += fmt.Sprint(dataset.Columns[x].Records)
 	}
 
-	assert.Equal(t, exp, got)
+	assert(t, exp, got, true)
 }
 
 func TestSelectRowsWhere(t *testing.T) {
@@ -310,7 +309,7 @@ func TestSelectRowsWhere(t *testing.T) {
 	exp := dataset.GetRow(9)
 	got := selected.GetRow(0)
 
-	assert.Equal(t, exp, got)
+	assert(t, exp, got, true)
 }
 
 func BenchmarkPushRow(b *testing.B) {

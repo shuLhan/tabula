@@ -6,7 +6,6 @@ package tabula_test
 
 import (
 	"github.com/shuLhan/tabula"
-	"github.com/shuLhan/tabula/util/assert"
 	"testing"
 )
 
@@ -35,7 +34,7 @@ func TestRandomPickColumns(t *testing.T) {
 		// check if unpicked item exist in picked items.
 		for _, un := range unpicked {
 			for _, pick := range picked {
-				assert.NotEqual(t, un, pick)
+				assert(t, un, pick, false)
 			}
 		}
 	}
@@ -49,7 +48,7 @@ func TestRandomPickColumns(t *testing.T) {
 		// check if unpicked item exist in picked items.
 		for _, un := range unpicked {
 			for _, pick := range picked {
-				assert.NotEqual(t, un, pick)
+				assert(t, un, pick, false)
 			}
 		}
 	}

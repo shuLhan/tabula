@@ -6,7 +6,6 @@ package tabula_test
 
 import (
 	"github.com/shuLhan/tabula"
-	"github.com/shuLhan/tabula/util/assert"
 	"testing"
 )
 
@@ -27,7 +26,7 @@ func TestToFloatSlice(t *testing.T) {
 
 	got := col.ToFloatSlice()
 
-	assert.Equal(t, expFloat, got)
+	assert(t, expFloat, got, true)
 }
 
 func TestToStringSlice(t *testing.T) {
@@ -44,5 +43,5 @@ func TestToStringSlice(t *testing.T) {
 
 	got := col.ToStringSlice()
 
-	assert.Equal(t, data, got)
+	assert(t, data, got, true)
 }

@@ -7,7 +7,6 @@ package tabula_test
 import (
 	"fmt"
 	"github.com/shuLhan/tabula"
-	"github.com/shuLhan/tabula/util/assert"
 	"testing"
 )
 
@@ -26,7 +25,7 @@ func TestAddRow(t *testing.T) {
 
 	got := fmt.Sprint(mapRows)
 
-	assert.Equal(t, groupByExpect, got)
+	assert(t, groupByExpect, got, true)
 }
 
 func TestGetMinority(t *testing.T) {
@@ -50,5 +49,5 @@ func TestGetMinority(t *testing.T) {
 	exp := rowsExpect[3]
 	got := fmt.Sprint(minRows)
 
-	assert.Equal(t, exp, got)
+	assert(t, exp, got, true)
 }

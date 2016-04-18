@@ -6,7 +6,19 @@ package tabula_test
 
 import (
 	"github.com/shuLhan/tabula"
+	"reflect"
+	"runtime/debug"
+	"testing"
 )
+
+func assert(t *testing.T, exp, got interface{}, equal bool) {
+	if reflect.DeepEqual(exp, got) != equal {
+		debug.PrintStack()
+		t.Fatalf("\n"+
+			">>> Expecting '%v'\n"+
+			"          got '%v'\n", exp, got)
+	}
+}
 
 var testColTypes = []int{
 	tabula.TInteger,

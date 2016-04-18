@@ -7,7 +7,6 @@ package tabula_test
 import (
 	"fmt"
 	"github.com/shuLhan/tabula"
-	"github.com/shuLhan/tabula/util/assert"
 	"testing"
 )
 
@@ -25,5 +24,5 @@ func TestSortByIndex(t *testing.T) {
 	got := fmt.Sprint(sorted)
 	exp := fmt.Sprint(&expect)
 
-	assert.Equal(t, exp, got)
+	assert(t, exp, got, true)
 }

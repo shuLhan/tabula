@@ -7,7 +7,6 @@ package tabula_test
 import (
 	"fmt"
 	"github.com/shuLhan/tabula"
-	"github.com/shuLhan/tabula/util/assert"
 	"testing"
 )
 
@@ -31,5 +30,5 @@ func TestRecord(t *testing.T) {
 
 	exp := fmt.Sprint(expec)
 	got := fmt.Sprint(row)
-	assert.Equal(t, exp, got)
+	assert(t, exp, got, true)
 }

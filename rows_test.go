@@ -6,11 +6,8 @@ package tabula_test
 
 import (
 	"fmt"
-	"reflect"
 	"strings"
 	"testing"
-
-	"github.com/shuLhan/tabula/util/assert"
 )
 
 var exp = []string{
@@ -30,7 +27,7 @@ func TestPushBack(t *testing.T) {
 	exp := strings.Join(rowsExpect, "")
 	got := fmt.Sprint(rows)
 
-	assert.Equal(t, exp, got)
+	assert(t, exp, got, true)
 }
 
 func TestPopFront(t *testing.T) {
@@ -46,7 +43,7 @@ func TestPopFront(t *testing.T) {
 		exp := rowsExpect[i]
 		got := fmt.Sprint(row)
 
-		assert.Equal(t, exp, got)
+		assert(t, exp, got, true)
 
 		if i < l {
 			exp = strings.Join(rowsExpect[i+1:], "")
@@ -55,7 +52,7 @@ func TestPopFront(t *testing.T) {
 		}
 		got = fmt.Sprint(rows)
 
-		assert.Equal(t, exp, got)
+		assert(t, exp, got, true)
 	}
 
 	// empty rows
@@ -64,7 +61,7 @@ func TestPopFront(t *testing.T) {
 	exp := "<nil>"
 	got := fmt.Sprint(row)
 
-	assert.Equal(t, exp, got)
+	assert(t, exp, got, true)
 }
 
 func TestPopFrontRow(t *testing.T) {
@@ -80,7 +77,7 @@ func TestPopFrontRow(t *testing.T) {
 		exp := rowsExpect[i]
 		got := fmt.Sprint(newRows)
 
-		assert.Equal(t, exp, got)
+		assert(t, exp, got, true)
 
 		if i < l {
 			exp = strings.Join(rowsExpect[i+1:], "")
@@ -89,7 +86,7 @@ func TestPopFrontRow(t *testing.T) {
 		}
 		got = fmt.Sprint(rows)
 
-		assert.Equal(t, exp, got)
+		assert(t, exp, got, true)
 	}
 
 	// empty rows
@@ -98,7 +95,7 @@ func TestPopFrontRow(t *testing.T) {
 	exp := ""
 	got := fmt.Sprint(row)
 
-	assert.Equal(t, exp, got)
+	assert(t, exp, got, true)
 }
 
 func TestGroupByValue(t *testing.T) {
@@ -111,7 +108,7 @@ func TestGroupByValue(t *testing.T) {
 
 	got := fmt.Sprint(mapRows)
 
-	assert.Equal(t, groupByExpect, got)
+	assert(t, groupByExpect, got, true)
 }
 
 func TestRandomPick(t *testing.T) {
@@ -144,9 +141,7 @@ func TestRandomPick(t *testing.T) {
 			false)
 
 		// check if picked rows is duplicate
-		if reflect.DeepEqual(picked[0], picked[1]) {
-			t.Fatal("random pick: duplicate rows found.")
-		}
+		assert(t, picked[0], picked[1], false)
 
 		// check if unpicked item exist in picked items.
 		isin, _ := picked.Contains(unpicked)
@@ -173,5 +168,5 @@ func TestRowsDel(t *testing.T) {
 	exp := strings.Join(rowsExpect[1:], "")
 	got := fmt.Sprint(rows)
 
-	assert.Equal(t, exp, got)
+	assert(t, exp, got, true)
 }
