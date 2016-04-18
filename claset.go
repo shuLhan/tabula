@@ -5,6 +5,7 @@
 package tabula
 
 import (
+	"github.com/shuLhan/numerus"
 	"github.com/shuLhan/tekstus"
 	"strconv"
 )
@@ -191,13 +192,13 @@ func (claset *Claset) CountValueSpaces() {
 func (claset *Claset) RecountMajorMinor() {
 	claset.CountValueSpaces()
 
-	_, maxIdx := tekstus.IntFindMax(claset.counts)
-	_, minIdx := tekstus.IntFindMin(claset.counts)
+	_, maxIdx, maxok := numerus.IntsFindMax(claset.counts)
+	_, minIdx, minok := numerus.IntsFindMin(claset.counts)
 
-	if maxIdx >= 0 {
+	if maxok {
 		claset.major = claset.vs[maxIdx]
 	}
-	if minIdx >= 0 {
+	if minok {
 		claset.minor = claset.vs[minIdx]
 	}
 }

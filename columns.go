@@ -5,7 +5,7 @@
 package tabula
 
 import (
-	"github.com/shuLhan/tabula/util"
+	"github.com/shuLhan/numerus"
 	"github.com/shuLhan/tekstus"
 )
 
@@ -65,7 +65,7 @@ func (cols *Columns) RandomPick(n int, dup bool, excludeIdx []int) (
 	}
 
 	for ; n >= 1; n-- {
-		idx := util.GetRandomInteger(colsLen, dup, pickedIdx,
+		idx := numerus.IntPickRandPositive(colsLen, dup, pickedIdx,
 			excludeIdx)
 
 		pickedIdx = append(pickedIdx, idx)
