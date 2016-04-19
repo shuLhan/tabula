@@ -74,7 +74,7 @@ func (dataset *Dataset) Init(mode int, types []int, names []string) {
 /*
 Clone return a copy of current dataset.
 */
-func (dataset *Dataset) Clone() DatasetInterface {
+func (dataset *Dataset) Clone() interface{} {
 	clone := NewDataset(dataset.GetMode(), nil, nil)
 
 	for _, col := range dataset.Columns {
@@ -717,9 +717,9 @@ func (dataset *Dataset) MergeRows(other DatasetInterface) {
 }
 
 //
-// DeleteRow will delete row at index `i`.
+// DeleteRow will detach row at index `i` from dataset and return it.
 //
-func (dataset *Dataset) DeleteRow(i int) {
+func (dataset *Dataset) DeleteRow(i int) (row *Row) {
 	if i < 0 {
 		return
 	}
@@ -732,9 +732,19 @@ func (dataset *Dataset) DeleteRow(i int) {
 		dataset.TransposeToRows()
 	}
 
-	dataset.Rows.Del(i)
+	row = dataset.Rows.Del(i)
 
 	if orgmode == DatasetModeColumns {
 		dataset.TransposeToColumns()
 	}
+
+	if orgmode != DatasetModeRows {
+		// Delete record in each columns as the same index as deleted
+		// row.
+		for x := range dataset.Columns {
+			dataset.Columns[x].DeleteRecordAt(i)
+		}
+	}
+
+	return row
 }

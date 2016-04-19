@@ -46,13 +46,13 @@ func NewClaset(mode int, types []int, names []string) (claset *Claset) {
 /*
 Clone return a copy of current claset object.
 */
-func (claset *Claset) Clone() DatasetInterface {
+func (claset *Claset) Clone() interface{} {
 	clone := Claset{
 		ClassIndex: claset.GetClassIndex(),
 		major:      claset.MajorityClass(),
 		minor:      claset.MinorityClass(),
 	}
-	clone.SetDataset(claset.GetDataset().Clone())
+	clone.SetDataset(claset.GetDataset().Clone().(DatasetInterface))
 	return &clone
 }
 

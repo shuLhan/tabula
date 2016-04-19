@@ -312,13 +312,53 @@ func TestSelectRowsWhere(t *testing.T) {
 	assert(t, exp, got, true)
 }
 
-func BenchmarkPushRow(b *testing.B) {
-	dataset := tabula.NewDataset(tabula.DatasetModeRows, nil, nil)
+func TestDeleteRow(t *testing.T) {
+	dataset := tabula.NewDataset(tabula.DatasetModeMatrix, nil, nil)
 
-	for i := 0; i < b.N; i++ {
-		e := populateWithRows(dataset)
-		if e != nil {
-			b.Fatal(e)
+	e := populateWithRows(dataset)
+	if e != nil {
+		t.Fatal(e)
+	}
+
+	delIdx := 2
+
+	// Check rows len.
+	exp := dataset.Len() - 1
+	dataset.DeleteRow(delIdx)
+	got := dataset.Len()
+
+	assert(t, exp, got, true)
+
+	// Check columns len.
+	for _, col := range dataset.Columns {
+		got = col.Len()
+
+		assert(t, exp, got, true)
+	}
+
+	// Check rows data.
+	ridx := 0
+	for x, row := range datasetRows {
+		if x == delIdx {
+			continue
 		}
+		exp := fmt.Sprint("&", row)
+		got := fmt.Sprint(dataset.GetRow(ridx))
+		ridx++
+
+		assert(t, exp, got, true)
+	}
+
+	// Check columns data.
+	for x := range dataset.Columns {
+		col := datasetCols[x]
+
+		coldel := []string{}
+		coldel = append(coldel, col[:delIdx]...)
+		coldel = append(coldel, col[delIdx+1:]...)
+
+		exp := fmt.Sprint(coldel)
+		got := fmt.Sprint(dataset.Columns[x].Records)
+		assert(t, exp, got, true)
 	}
 }

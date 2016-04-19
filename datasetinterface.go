@@ -15,7 +15,7 @@ DatasetInterface is the interface for working with DSV data.
 */
 type DatasetInterface interface {
 	Init(mode int, types []int, names []string)
-	Clone() DatasetInterface
+	Clone() interface{}
 	Reset() error
 
 	GetMode() int
@@ -43,7 +43,7 @@ type DatasetInterface interface {
 	GetRow(idx int) *Row
 	GetRows() *Rows
 	SetRows(*Rows)
-	DeleteRow(idx int)
+	DeleteRow(idx int) *Row
 
 	GetData() interface{}
 	GetDataAsRows() *Rows
@@ -135,8 +135,8 @@ func SplitRowsByNumeric(di DatasetInterface, colidx int, splitVal float64) (
 		fmt.Println("[tabula] dataset:", di)
 	}
 
-	splitLess = di.Clone()
-	splitGreater = di.Clone()
+	splitLess = di.Clone().(DatasetInterface)
+	splitGreater = di.Clone().(DatasetInterface)
 
 	rows := di.GetRows()
 	for _, row := range *rows {
@@ -207,8 +207,8 @@ func SplitRowsByCategorical(di DatasetInterface, colidx int,
 		di.TransposeToRows()
 	}
 
-	splitIn = di.Clone()
-	splitEx = di.Clone()
+	splitIn = di.Clone().(DatasetInterface)
+	splitEx = di.Clone().(DatasetInterface)
 
 	found := false
 
