@@ -163,10 +163,25 @@ func TestRowsDel(t *testing.T) {
 		t.Fatal(e)
 	}
 
-	rows.Del(0)
+	// Test deleting row index out of range.
+	row := rows.Del(-1)
+	if row != nil {
+		t.Fatal("row should be nil!")
+	}
+
+	row = rows.Del(rows.Len())
+	if row != nil {
+		t.Fatal("row should be nil!")
+	}
+
+	// Test deleting index that is actually exist.
+	row = rows.Del(0)
 
 	exp := strings.Join(rowsExpect[1:], "")
 	got := fmt.Sprint(rows)
 
 	assert(t, exp, got, true)
+
+	got = fmt.Sprint(row)
+	assert(t, rowsExpect[0], got, true)
 }

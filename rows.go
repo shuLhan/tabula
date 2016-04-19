@@ -56,9 +56,9 @@ func (rows *Rows) PopFrontAsRows() (newRows Rows) {
 }
 
 //
-// Del will delete a row at index `i`.
+// Del will detach row at index `i` from slice and return it.
 //
-func (rows *Rows) Del(i int) {
+func (rows *Rows) Del(i int) (row *Row) {
 	if i < 0 {
 		return
 	}
@@ -66,10 +66,14 @@ func (rows *Rows) Del(i int) {
 		return
 	}
 
+	row = (*rows)[i]
+
 	last := len(*rows) - 1
 	copy((*rows)[i:], (*rows)[i+1:])
 	(*rows)[last] = nil
 	(*rows) = (*rows)[0:last]
+
+	return row
 }
 
 /*
