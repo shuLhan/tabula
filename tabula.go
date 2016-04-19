@@ -85,10 +85,9 @@ var (
 )
 
 func init() {
-	v := os.Getenv("TABULA_DEBUG")
-	if v == "" {
+	var e error
+	DEBUG, e = strconv.Atoi(os.Getenv("TABULA_DEBUG"))
+	if e != nil {
 		DEBUG = 0
-	} else {
-		DEBUG, _ = strconv.Atoi(v)
 	}
 }
