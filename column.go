@@ -284,3 +284,26 @@ func (col *Column) SetValues(values []string) {
 		_ = col.Records[x].SetValue(values[x], col.Type)
 	}
 }
+
+//
+// DeleteRecordAt will delete record at index `i` and return it.
+//
+func (col *Column) DeleteRecordAt(i int) *Record {
+	if i < 0 {
+		return nil
+	}
+
+	clen := col.Len()
+	if i >= clen {
+		return nil
+	}
+
+	r := col.Records[i]
+
+	last := clen - 1
+	copy(col.Records[i:], col.Records[i+1:])
+	col.Records[last] = nil
+	col.Records = col.Records[0:last]
+
+	return r
+}
