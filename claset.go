@@ -148,6 +148,16 @@ func (claset *Claset) MinorityClass() string {
 	return claset.minor
 }
 
+//
+// Counts return the number of each class in value-space.
+//
+func (claset *Claset) Counts() []int {
+	if len(claset.counts) <= 0 {
+		claset.CountValueSpaces()
+	}
+	return claset.counts
+}
+
 /*
 SetDataset in class set.
 */

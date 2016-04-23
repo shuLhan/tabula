@@ -23,6 +23,7 @@ type ClasetInterface interface {
 	GetClassIndex() int
 	MajorityClass() string
 	MinorityClass() string
+	Counts() []int
 
 	SetDataset(DatasetInterface)
 	SetClassIndex(int)
