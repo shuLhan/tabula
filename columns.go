@@ -14,6 +14,13 @@ Columns represent slice of Column.
 */
 type Columns []Column
 
+//
+// Len return length of columns.
+//
+func (cols *Columns) Len() int {
+	return len(*cols)
+}
+
 /*
 Reset each data and attribute in all columns.
 */
