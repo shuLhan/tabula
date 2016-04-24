@@ -5,6 +5,7 @@
 package tabula
 
 import (
+	"fmt"
 	"github.com/shuLhan/numerus"
 	"github.com/shuLhan/tekstus"
 	"strconv"
@@ -67,6 +68,9 @@ func (claset *Claset) GetDataset() DatasetInterface {
 // GetClassType return type of class in dataset.
 //
 func (claset *Claset) GetClassType() int {
+	if claset.Columns.Len() <= 0 {
+		return TString
+	}
 	return claset.Columns[claset.ClassIndex].Type
 }
 
@@ -74,6 +78,9 @@ func (claset *Claset) GetClassType() int {
 GetClassValueSpace return the class value space.
 */
 func (claset *Claset) GetClassValueSpace() []string {
+	if claset.Columns.Len() <= 0 {
+		return nil
+	}
 	return claset.Columns[claset.ClassIndex].ValueSpace
 }
 
@@ -83,6 +90,9 @@ GetClassColumn return dataset class values in column.
 func (claset *Claset) GetClassColumn() *Column {
 	if claset.Mode == DatasetModeRows {
 		claset.TransposeToColumns()
+	}
+	if claset.Columns.Len() <= 0 {
+		return nil
 	}
 	return &claset.Columns[claset.ClassIndex]
 }
@@ -94,6 +104,9 @@ func (claset *Claset) GetClassRecords() *Records {
 	if claset.Mode == DatasetModeRows {
 		claset.TransposeToColumns()
 	}
+	if claset.Columns.Len() <= 0 {
+		return nil
+	}
 	return &claset.Columns[claset.ClassIndex].Records
 }
 
@@ -103,6 +116,9 @@ GetClassAsStrings return all class values as slice of string.
 func (claset *Claset) GetClassAsStrings() []string {
 	if claset.Mode == DatasetModeRows {
 		claset.TransposeToColumns()
+	}
+	if claset.Columns.Len() <= 0 {
+		return nil
 	}
 	return claset.Columns[claset.ClassIndex].ToStringSlice()
 }
@@ -114,6 +130,9 @@ func (claset *Claset) GetClassAsReals() []float64 {
 	if claset.Mode == DatasetModeRows {
 		claset.TransposeToColumns()
 	}
+	if claset.Columns.Len() <= 0 {
+		return nil
+	}
 	return claset.Columns[claset.ClassIndex].ToFloatSlice()
 }
 
@@ -123,6 +142,9 @@ func (claset *Claset) GetClassAsReals() []float64 {
 func (claset *Claset) GetClassAsInteger() []int64 {
 	if claset.Mode == DatasetModeRows {
 		claset.TransposeToColumns()
+	}
+	if claset.Columns.Len() <= 0 {
+		return nil
 	}
 	return claset.Columns[claset.ClassIndex].ToIntegers()
 }
@@ -260,25 +282,21 @@ func (claset *Claset) String() (s string) {
 		claset.RecountMajorMinor()
 	}
 
-	s = `"claset": {
-	"rows"    : ` + strconv.Itoa(claset.Len()) + `
-,	"columns" : ` + strconv.Itoa(claset.GetNColumn()) + `
-,	"vs"      :{
-`
+	s = fmt.Sprintf("'claset':{ 'rows': %d, 'columns': %d, ", claset.Len(),
+		claset.GetNColumn())
 
+	s += "'vs':{"
 	for x, v := range claset.vs {
 		if x > 0 {
-			s += "\t,"
-		} else {
-			s += "\t"
+			s += ","
 		}
-		s += "\t\"" + v + "\"\t:" + strconv.Itoa(claset.counts[x]) + "\n"
+		s += " '" + v + "':" + strconv.Itoa(claset.counts[x])
 	}
+	s += "}"
 
-	s += `	}
-,	"major" :` + claset.major + `
-,	"minor" :` + claset.minor + `
-}`
+	s += ", 'major': '" + claset.major + "'"
+	s += ", 'minor': '" + claset.minor + "'"
+	s += "}"
 
 	return
 }
