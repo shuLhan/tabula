@@ -282,15 +282,15 @@ func (claset *Claset) String() (s string) {
 		claset.RecountMajorMinor()
 	}
 
-	s = fmt.Sprintf("'claset':{ 'rows': %d, 'columns': %d, ", claset.Len(),
+	s = fmt.Sprintf("'claset':{'rows': %d, 'columns': %d, ", claset.Len(),
 		claset.GetNColumn())
 
 	s += "'vs':{"
 	for x, v := range claset.vs {
 		if x > 0 {
-			s += ","
+			s += ", "
 		}
-		s += " '" + v + "':" + strconv.Itoa(claset.counts[x])
+		s += "'" + v + "':" + strconv.Itoa(claset.counts[x])
 	}
 	s += "}"
 
