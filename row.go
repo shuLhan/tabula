@@ -70,6 +70,20 @@ func (row *Row) SetValueAt(idx int, rec *Record) {
 }
 
 //
+// GetRecord will return pointer to record at index `i`, or nil if index
+// is out of range.
+//
+func (row *Row) GetRecord(i int) *Record {
+	if i < 0 {
+		return nil
+	}
+	if i >= row.Len() {
+		return nil
+	}
+	return (*row)[i]
+}
+
+//
 // GetValueAt return the value of row record at index `idx`. If the index is
 // out of range it will return nil and false
 //
