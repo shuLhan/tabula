@@ -1,5 +1,6 @@
 [![GoDoc](https://godoc.org/github.com/shuLhan/tabula?status.svg)](https://godoc.org/github.com/shuLhan/tabula)
 [![Go Report Card](https://goreportcard.com/badge/github.com/shuLhan/tabula)](https://goreportcard.com/report/github.com/shuLhan/tabula)
+![cover.run go](https://cover.run/go/github.com/shuLhan/tabula.svg)
 
 Package tabula is a Go library for working with rows, columns, or matrix
 (table), or in another terms working with data set.
