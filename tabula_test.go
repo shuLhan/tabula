@@ -5,15 +5,41 @@
 package tabula_test
 
 import (
-	"github.com/shuLhan/tabula"
+	"os"
 	"reflect"
-	"runtime/debug"
+	"runtime"
 	"testing"
+
+	"github.com/shuLhan/tabula"
 )
+
+var (
+	traces = make([]byte, 1024)
+)
+
+func printStackTrace() {
+	var lines, start, end int
+
+	for x, b := range traces {
+		if b != '\n' {
+			continue
+		}
+		lines++
+		if lines == 3 {
+			start = x
+		} else if lines == 5 {
+			end = x + 1
+			break
+		}
+	}
+
+	os.Stderr.Write(traces[start:end])
+}
 
 func assert(t *testing.T, exp, got interface{}, equal bool) {
 	if reflect.DeepEqual(exp, got) != equal {
-		debug.PrintStack()
+		runtime.Stack(traces, true)
+		printStackTrace()
 		t.Fatalf("\n"+
 			">>> Expecting '%v'\n"+
 			"          got '%v'\n", exp, got)
