@@ -1,6 +1,6 @@
-// Copyright 2016 Mhd Sulhan <ms@kilabit.info>. All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
+// Copyright 2017 M. Shulhan <ms@kilabit.info>. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be found
+// in the LICENSE file.
 
 package tabula
 
@@ -8,22 +8,22 @@ import (
 	"math"
 )
 
-/*
-MapRowsElement represent a single mapping of string key to rows.
-*/
+//
+// MapRowsElement represent a single mapping of string key to rows.
+//
 type MapRowsElement struct {
 	Key   string
 	Value Rows
 }
 
-/*
-MapRows represent a list of mapping between string key and rows.
-*/
+//
+// MapRows represent a list of mapping between string key and rows.
+//
 type MapRows []MapRowsElement
 
-/*
-insertRow will insert a row `v` into map using key `k`.
-*/
+//
+// insertRow will insert a row `v` into map using key `k`.
+//
 func (mapRows *MapRows) insertRow(k string, v *Row) {
 	rows := Rows{}
 	rows.PushBack(v)
@@ -31,10 +31,10 @@ func (mapRows *MapRows) insertRow(k string, v *Row) {
 	(*mapRows) = append((*mapRows), el)
 }
 
-/*
-AddRow will append a row `v` into map value if they key `k` exist in map,
-otherwise it will insert a new map element.
-*/
+//
+// AddRow will append a row `v` into map value if they key `k` exist in map,
+// otherwise it will insert a new map element.
+//
 func (mapRows *MapRows) AddRow(k string, v *Row) {
 	for x := range *mapRows {
 		if (*mapRows)[x].Key == k {
@@ -46,9 +46,9 @@ func (mapRows *MapRows) AddRow(k string, v *Row) {
 	mapRows.insertRow(k, v)
 }
 
-/*
-GetMinority return map value which contain the minimum rows.
-*/
+//
+// GetMinority return map value which contain the minimum rows.
+//
 func (mapRows *MapRows) GetMinority() (keyMin string, valMin Rows) {
 	min := math.MaxInt32
 

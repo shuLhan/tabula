@@ -1,6 +1,6 @@
-// Copyright 2016 Mhd Sulhan <ms@kilabit.info>. All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
+// Copyright 2017 M. Shulhan <ms@kilabit.info>. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be found
+// in the LICENSE file.
 
 package tabula_test
 
@@ -9,14 +9,6 @@ import (
 	"strings"
 	"testing"
 )
-
-var exp = []string{
-	"0\n",
-	"1\n",
-	"2\n",
-	"3\n",
-	"4\n",
-}
 
 func TestPushBack(t *testing.T) {
 	rows, e := initRows()

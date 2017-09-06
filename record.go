@@ -1,6 +1,6 @@
-// Copyright 2016 Mhd Sulhan <ms@kilabit.info>. All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
+// Copyright 2017 M. Shulhan <ms@kilabit.info>. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be found
+// in the LICENSE file.
 
 package tabula
 
@@ -76,10 +76,7 @@ func (r *Record) Clone() *Record {
 // IsNil return true if record has not been set with value, or nil.
 //
 func (r *Record) IsNil() bool {
-	if r.v == nil {
-		return true
-	}
-	return false
+	return r.v == nil
 }
 
 //
@@ -269,10 +266,7 @@ func (r *Record) IsEqual(o *Record) bool {
 // equal to string `v`.
 //
 func (r *Record) IsEqualToString(v string) bool {
-	if r.String() == v {
-		return true
-	}
-	return false
+	return r.String() == v
 }
 
 //

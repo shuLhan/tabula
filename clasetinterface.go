@@ -1,16 +1,16 @@
-// Copyright 2016 Mhd Sulhan <ms@kilabit.info>. All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
+// Copyright 2017 M. Shulhan <ms@kilabit.info>. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be found
+// in the LICENSE file.
 
 package tabula
 
-/*
-ClasetInterface is the interface for working with dataset containing class
-or target attribute. It embed dataset interface.
-
-Yes, the name is Claset with single `s` not Classset with triple `s` to
-minimize typo.
-*/
+//
+// ClasetInterface is the interface for working with dataset containing class
+// or target attribute. It embed dataset interface.
+//
+// Yes, the name is Claset with single `s` not Classset with triple `s` to
+// minimize typo.
+//
 type ClasetInterface interface {
 	DatasetInterface
 

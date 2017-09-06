@@ -1,6 +1,6 @@
-// Copyright 2016 Mhd Sulhan <ms@kilabit.info>. All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
+// Copyright 2017 M. Shulhan <ms@kilabit.info>. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be found
+// in the LICENSE file.
 
 package tabula
 
@@ -30,10 +30,10 @@ var (
 	ErrMisColLength = errors.New("tabula: mismatch on column length")
 )
 
-/*
-Dataset contain the data, mode of saved data, number of columns and rows in
-data.
-*/
+//
+// Dataset contain the data, mode of saved data, number of columns and rows in
+// data.
+//
 type Dataset struct {
 	// Mode define the numeric value of output mode.
 	Mode int
@@ -43,9 +43,9 @@ type Dataset struct {
 	Rows Rows
 }
 
-/*
-NewDataset create new dataset, use the mode to initialize the dataset.
-*/
+//
+// NewDataset create new dataset, use the mode to initialize the dataset.
+//
 func NewDataset(mode int, types []int, names []string) (
 	dataset *Dataset,
 ) {
@@ -56,9 +56,9 @@ func NewDataset(mode int, types []int, names []string) (
 	return
 }
 
-/*
-Init will set the dataset using mode and types.
-*/
+//
+// Init will set the dataset using mode and types.
+//
 func (dataset *Dataset) Init(mode int, types []int, names []string) {
 	if types == nil {
 		dataset.Columns = make(Columns, 0)
@@ -71,9 +71,9 @@ func (dataset *Dataset) Init(mode int, types []int, names []string) {
 	dataset.SetMode(mode)
 }
 
-/*
-Clone return a copy of current dataset.
-*/
+//
+// Clone return a copy of current dataset.
+//
 func (dataset *Dataset) Clone() interface{} {
 	clone := NewDataset(dataset.GetMode(), nil, nil)
 
@@ -89,25 +89,25 @@ func (dataset *Dataset) Clone() interface{} {
 	return clone
 }
 
-/*
-Reset all data and attributes.
-*/
+//
+// Reset all data and attributes.
+//
 func (dataset *Dataset) Reset() error {
 	dataset.Rows = Rows{}
 	dataset.Columns.Reset()
 	return nil
 }
 
-/*
-GetMode return mode of data.
-*/
+//
+// GetMode return mode of data.
+//
 func (dataset *Dataset) GetMode() int {
 	return dataset.Mode
 }
 
-/*
-SetMode of saved data to `mode`.
-*/
+//
+// SetMode of saved data to `mode`.
+//
 func (dataset *Dataset) SetMode(mode int) {
 	switch mode {
 	case DatasetModeRows:
@@ -123,9 +123,9 @@ func (dataset *Dataset) SetMode(mode int) {
 	}
 }
 
-/*
-GetNColumn return the number of column in dataset.
-*/
+//
+// GetNColumn return the number of column in dataset.
+//
 func (dataset *Dataset) GetNColumn() (ncol int) {
 	ncol = len(dataset.Columns)
 
@@ -144,9 +144,9 @@ func (dataset *Dataset) GetNColumn() (ncol int) {
 	return
 }
 
-/*
-GetNRow return number of rows in dataset.
-*/
+//
+// GetNRow return number of rows in dataset.
+//
 func (dataset *Dataset) GetNRow() (nrow int) {
 	switch dataset.Mode {
 	case DatasetModeRows:
@@ -165,16 +165,16 @@ func (dataset *Dataset) GetNRow() (nrow int) {
 	return
 }
 
-/*
-Len return number of row in dataset.
-*/
+//
+// Len return number of row in dataset.
+//
 func (dataset *Dataset) Len() int {
 	return dataset.GetNRow()
 }
 
-/*
-GetColumnsType return the type of all columns.
-*/
+//
+// GetColumnsType return the type of all columns.
+//
 func (dataset *Dataset) GetColumnsType() (types []int) {
 	for x := range dataset.Columns {
 		types = append(types, dataset.Columns[x].Type)
@@ -183,18 +183,17 @@ func (dataset *Dataset) GetColumnsType() (types []int) {
 	return
 }
 
-/*
-SetColumnsType of data in all columns.
-*/
+//
+// SetColumnsType of data in all columns.
+//
 func (dataset *Dataset) SetColumnsType(types []int) {
 	dataset.Columns = make(Columns, len(types))
 	dataset.Columns.SetTypes(types)
 }
 
-/*
-GetColumnTypeAt return type of column in index `colidx` in
-dataset.
-*/
+//
+// GetColumnTypeAt return type of column in index `colidx` in dataset.
+//
 func (dataset *Dataset) GetColumnTypeAt(idx int) (int, error) {
 	if idx >= dataset.GetNColumn() {
 		return TUndefined, ErrColIdxOutOfRange
@@ -203,9 +202,9 @@ func (dataset *Dataset) GetColumnTypeAt(idx int) (int, error) {
 	return dataset.Columns[idx].Type, nil
 }
 
-/*
-SetColumnTypeAt will set column type at index `colidx` to `tipe`.
-*/
+//
+// SetColumnTypeAt will set column type at index `colidx` to `tipe`.
+//
 func (dataset *Dataset) SetColumnTypeAt(idx, tipe int) error {
 	if idx >= dataset.GetNColumn() {
 		return ErrColIdxOutOfRange
@@ -215,9 +214,9 @@ func (dataset *Dataset) SetColumnTypeAt(idx, tipe int) error {
 	return nil
 }
 
-/*
-GetColumnsName return name of all columns.
-*/
+//
+// GetColumnsName return name of all columns.
+//
 func (dataset *Dataset) GetColumnsName() (names []string) {
 	for x := range dataset.Columns {
 		names = append(names, dataset.Columns[x].Name)
@@ -226,9 +225,9 @@ func (dataset *Dataset) GetColumnsName() (names []string) {
 	return
 }
 
-/*
-SetColumnsName set column name.
-*/
+//
+// SetColumnsName set column name.
+//
 func (dataset *Dataset) SetColumnsName(names []string) {
 	nameslen := len(names)
 
@@ -253,14 +252,12 @@ func (dataset *Dataset) SetColumnsName(names []string) {
 	for x := 0; x < minlen; x++ {
 		dataset.Columns[x].Name = names[x]
 	}
-
-	return
 }
 
-/*
-AddColumn will create and add new empty column with specific type and name into
-dataset.
-*/
+//
+// AddColumn will create and add new empty column with specific type and name
+// into dataset.
+//
 func (dataset *Dataset) AddColumn(tipe int, name string, vs []string) {
 	col := Column{
 		Type:       tipe,
@@ -270,10 +267,10 @@ func (dataset *Dataset) AddColumn(tipe int, name string, vs []string) {
 	dataset.PushColumn(col)
 }
 
-/*
-GetColumn return pointer to column object at index `idx`.
-If `idx` is out of range return nil.
-*/
+//
+// GetColumn return pointer to column object at index `idx`.  If `idx` is out of
+// range return nil.
+//
 func (dataset *Dataset) GetColumn(idx int) (col *Column) {
 	if idx > dataset.GetNColumn() {
 		return
@@ -291,9 +288,9 @@ func (dataset *Dataset) GetColumn(idx int) (col *Column) {
 	return &dataset.Columns[idx]
 }
 
-/*
-GetColumnByName return column based on their `name`.
-*/
+//
+// GetColumnByName return column based on their `name`.
+//
 func (dataset *Dataset) GetColumnByName(name string) (col *Column) {
 	switch dataset.Mode {
 	case DatasetModeRows:
@@ -308,16 +305,16 @@ func (dataset *Dataset) GetColumnByName(name string) (col *Column) {
 	return
 }
 
-/*
-GetColumns return columns in dataset, without transposing.
-*/
+//
+// GetColumns return columns in dataset, without transposing.
+//
 func (dataset *Dataset) GetColumns() *Columns {
 	return &dataset.Columns
 }
 
-/*
-SetColumns will replace current columns with new one from parameter.
-*/
+//
+// SetColumns will replace current columns with new one from parameter.
+//
 func (dataset *Dataset) SetColumns(cols *Columns) {
 	dataset.Columns = *cols
 }
@@ -335,23 +332,23 @@ func (dataset *Dataset) GetRow(idx int) *Row {
 	return dataset.Rows[idx]
 }
 
-/*
-GetRows return rows in dataset, without transposing.
-*/
+//
+// GetRows return rows in dataset, without transposing.
+//
 func (dataset *Dataset) GetRows() *Rows {
 	return &dataset.Rows
 }
 
-/*
-SetRows will replace current rows with new one from parameter.
-*/
+//
+// SetRows will replace current rows with new one from parameter.
+//
 func (dataset *Dataset) SetRows(rows *Rows) {
 	dataset.Rows = *rows
 }
 
-/*
-GetData return the data, based on mode (rows, columns, or matrix).
-*/
+//
+// GetData return the data, based on mode (rows, columns, or matrix).
+//
 func (dataset *Dataset) GetData() interface{} {
 	switch dataset.Mode {
 	case DatasetModeRows:
@@ -368,9 +365,9 @@ func (dataset *Dataset) GetData() interface{} {
 	return nil
 }
 
-/*
-GetDataAsRows return data in rows mode.
-*/
+//
+// GetDataAsRows return data in rows mode.
+//
 func (dataset *Dataset) GetDataAsRows() *Rows {
 	if dataset.Mode == DatasetModeColumns {
 		dataset.TransposeToRows()
@@ -378,9 +375,9 @@ func (dataset *Dataset) GetDataAsRows() *Rows {
 	return &dataset.Rows
 }
 
-/*
-GetDataAsColumns return data in columns mode.
-*/
+//
+// GetDataAsColumns return data in columns mode.
+//
 func (dataset *Dataset) GetDataAsColumns() (columns *Columns) {
 	if dataset.Mode == DatasetModeRows {
 		dataset.TransposeToColumns()
@@ -388,10 +385,10 @@ func (dataset *Dataset) GetDataAsColumns() (columns *Columns) {
 	return &dataset.Columns
 }
 
-/*
-TransposeToColumns move all data from rows (horizontal) to columns
-(vertical) mode.
-*/
+//
+// TransposeToColumns move all data from rows (horizontal) to columns
+// (vertical) mode.
+//
 func (dataset *Dataset) TransposeToColumns() {
 	if dataset.GetNRow() <= 0 {
 		// nothing to transpose
@@ -448,10 +445,10 @@ func (dataset *Dataset) TransposeToColumns() {
 	}
 }
 
-/*
-TransposeToRows will move all data from columns (vertical) to rows (horizontal)
-mode.
-*/
+//
+// TransposeToRows will move all data from columns (vertical) to rows
+// (horizontal) mode.
+//
 func (dataset *Dataset) TransposeToRows() {
 	orgmode := dataset.GetMode()
 
@@ -501,9 +498,9 @@ func (dataset *Dataset) TransposeToRows() {
 	}
 }
 
-/*
-PushRow save the data, which is already in row object, to Rows.
-*/
+//
+// PushRow save the data, which is already in row object, to Rows.
+//
 func (dataset *Dataset) PushRow(row *Row) {
 	switch dataset.GetMode() {
 	case DatasetModeRows:
@@ -516,9 +513,9 @@ func (dataset *Dataset) PushRow(row *Row) {
 	}
 }
 
-/*
-PushRowToColumns push each data in Row to Columns.
-*/
+//
+// PushRowToColumns push each data in Row to Columns.
+//
 func (dataset *Dataset) PushRowToColumns(row *Row) {
 	rowlen := row.Len()
 	if rowlen <= 0 {
@@ -544,23 +541,23 @@ func (dataset *Dataset) PushRowToColumns(row *Row) {
 	}
 }
 
-/*
-FillRowsWithColumn given a column, fill the dataset with row where the record
-only set at index `colIdx`.
-
-Example, content of dataset was,
-
-index:	0 1 2
-	A B C
-	X     (step 1) nrow = 2
-
-If we filled column at index 2 with [Y Z], the dataset will become:
-
-index:	0 1 2
-	A B C
-	X   Y (step 2) fill the empty row
-	    Z (step 3) create dummy row which contain the rest of column data.
-*/
+//
+// FillRowsWithColumn given a column, fill the dataset with row where the record
+// only set at index `colIdx`.
+//
+// Example, content of dataset was,
+//
+// index:	0 1 2
+// 	A B C
+// 	X     (step 1) nrow = 2
+//
+// If we filled column at index 2 with [Y Z], the dataset will become:
+//
+// index:	0 1 2
+// 	A B C
+// 	X   Y (step 2) fill the empty row
+// 	    Z (step 3) create dummy row which contain the rest of column data.
+//
 func (dataset *Dataset) FillRowsWithColumn(colIdx int, col Column) {
 	if dataset.GetMode() != DatasetModeRows {
 		// Only work if dataset mode is ROWS
@@ -604,10 +601,10 @@ func (dataset *Dataset) FillRowsWithColumn(colIdx int, col Column) {
 	}
 }
 
-/*
-PushColumn will append new column to the end of slice if no existing column
-with the same name. If it exist, the records will be merged.
-*/
+//
+// PushColumn will append new column to the end of slice if no existing column
+// with the same name. If it exist, the records will be merged.
+//
 func (dataset *Dataset) PushColumn(col Column) {
 	exist := false
 	colIdx := 0
@@ -646,9 +643,9 @@ func (dataset *Dataset) PushColumn(col Column) {
 	}
 }
 
-/*
-PushColumnToRows add each record in column to each rows, from top to bottom.
-*/
+//
+// PushColumnToRows add each record in column to each rows, from top to bottom.
+//
 func (dataset *Dataset) PushColumnToRows(col Column) {
 	colsize := col.Len()
 	if colsize <= 0 {
@@ -686,9 +683,9 @@ func (dataset *Dataset) PushColumnToRows(col Column) {
 	}
 }
 
-/*
-MergeColumns append columns from other dataset into current dataset.
-*/
+//
+// MergeColumns append columns from other dataset into current dataset.
+//
 func (dataset *Dataset) MergeColumns(other DatasetInterface) {
 	othermode := other.GetMode()
 	if othermode == DatasetModeRows {
@@ -706,9 +703,9 @@ func (dataset *Dataset) MergeColumns(other DatasetInterface) {
 	}
 }
 
-/*
-MergeRows append rows from other dataset into current dataset.
-*/
+//
+// MergeRows append rows from other dataset into current dataset.
+//
 func (dataset *Dataset) MergeRows(other DatasetInterface) {
 	rows := other.GetDataAsRows()
 	for _, row := range *rows {

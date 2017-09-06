@@ -1,6 +1,6 @@
-// Copyright 2016 Mhd Sulhan <ms@kilabit.info>. All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
+// Copyright 2017 M. Shulhan <ms@kilabit.info>. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be found
+// in the LICENSE file.
 
 package tabula_test
 
@@ -10,9 +10,9 @@ import (
 	"testing"
 )
 
-/*
-TestRecord simply check how the stringer work.
-*/
+//
+// TestRecord simply check how the stringer work.
+//
 func TestRecord(t *testing.T) {
 	expec := []string{"test", "1", "2"}
 	expType := []int{tabula.TString, tabula.TInteger, tabula.TInteger}

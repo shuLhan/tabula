@@ -1,6 +1,6 @@
-// Copyright 2016 Mhd Sulhan <ms@kilabit.info>. All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
+// Copyright 2017 M. Shulhan <ms@kilabit.info>. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be found
+// in the LICENSE file.
 
 package tabula
 
@@ -10,9 +10,9 @@ import (
 	"time"
 )
 
-/*
-Rows represent slice of Row.
-*/
+//
+// Rows represent slice of Row.
+//
 type Rows []*Row
 
 //
@@ -22,18 +22,18 @@ func (rows *Rows) Len() int {
 	return len(*rows)
 }
 
-/*
-PushBack append record r to the end of rows.
-*/
+//
+// PushBack append record r to the end of rows.
+//
 func (rows *Rows) PushBack(r *Row) {
 	if r != nil {
 		(*rows) = append((*rows), r)
 	}
 }
 
-/*
-PopFront remove the head, return the record value.
-*/
+//
+// PopFront remove the head, return the record value.
+//
 func (rows *Rows) PopFront() (row *Row) {
 	l := len(*rows)
 	if l > 0 {
@@ -43,9 +43,9 @@ func (rows *Rows) PopFront() (row *Row) {
 	return
 }
 
-/*
-PopFrontAsRows remove the head and return ex-head as new rows.
-*/
+//
+// PopFrontAsRows remove the head and return ex-head as new rows.
+//
 func (rows *Rows) PopFrontAsRows() (newRows Rows) {
 	row := rows.PopFront()
 	if nil == row {
@@ -76,28 +76,28 @@ func (rows *Rows) Del(i int) (row *Row) {
 	return row
 }
 
-/*
-GroupByValue will group each row based on record value in index recGroupIdx
-into map of string -> *Row.
-
-WARNING: returned rows will be empty!
-
-For example, given rows with target group in column index 1,
-
-	[1 +]
-	[2 -]
-	[3 -]
-	[4 +]
-
-this function will create a map with key is string of target and value is
-pointer to sub-rows,
-
-	+ -> [1 +]
-             [4 +]
-	- -> [2 -]
-             [3 -]
-
-*/
+//
+// GroupByValue will group each row based on record value in index recGroupIdx
+// into map of string -> *Row.
+//
+// WARNING: returned rows will be empty!
+//
+// For example, given rows with target group in column index 1,
+//
+// 	[1 +]
+// 	[2 -]
+// 	[3 -]
+// 	[4 +]
+//
+// this function will create a map with key is string of target and value is
+// pointer to sub-rows,
+//
+// 	+ -> [1 +]
+//           [4 +]
+// 	- -> [2 -]
+//           [3 -]
+//
+//
 func (rows *Rows) GroupByValue(GroupIdx int) (mapRows MapRows) {
 	for {
 		row := rows.PopFront()
@@ -112,13 +112,13 @@ func (rows *Rows) GroupByValue(GroupIdx int) (mapRows MapRows) {
 	return
 }
 
-/*
-RandomPick row in rows until n item and return it like its has been shuffled.
-If duplicate is true, row that has been picked can be picked up again,
-otherwise it will only picked up once.
-
-This function return picked and unpicked rows and index of them.
-*/
+//
+// RandomPick row in rows until n item and return it like its has been shuffled.
+// If duplicate is true, row that has been picked can be picked up again,
+// otherwise it will only picked up once.
+//
+// This function return picked and unpicked rows and index of them.
+//
 func (rows *Rows) RandomPick(n int, duplicate bool) (
 	picked Rows,
 	unpicked Rows,
@@ -187,10 +187,10 @@ func (rows *Rows) RandomPick(n int, duplicate bool) (
 	return
 }
 
-/*
-Contain return true and index of row, if rows has data that has the same value
-with `row`, otherwise return false and -1 as index.
-*/
+//
+// Contain return true and index of row, if rows has data that has the same value
+// with `row`, otherwise return false and -1 as index.
+//
 func (rows *Rows) Contain(xrow *Row) (bool, int) {
 	for x, row := range *rows {
 		if xrow.IsEqual(row) {
@@ -200,10 +200,10 @@ func (rows *Rows) Contain(xrow *Row) (bool, int) {
 	return false, -1
 }
 
-/*
-Contains return true and indices of row, if rows has data that has the same
-value with `rows`, otherwise return false and empty indices.
-*/
+//
+// Contains return true and indices of row, if rows has data that has the same
+// value with `rows`, otherwise return false and empty indices.
+//
 func (rows *Rows) Contains(xrows Rows) (isin bool, indices []int) {
 	// No data to compare.
 	if len(xrows) <= 0 {
@@ -226,10 +226,10 @@ func (rows *Rows) Contains(xrows Rows) (isin bool, indices []int) {
 	return false, nil
 }
 
-/*
-SelectWhere return all rows which column value in `colidx` is equal
-to `colval`.
-*/
+//
+// SelectWhere return all rows which column value in `colidx` is equal
+// to `colval`.
+//
 func (rows *Rows) SelectWhere(colidx int, colval string) (selected Rows) {
 	for _, row := range *rows {
 		col := (*row)[colidx]
@@ -240,9 +240,9 @@ func (rows *Rows) SelectWhere(colidx int, colval string) (selected Rows) {
 	return
 }
 
-/*
-String return the string representation of each row.
-*/
+//
+// String return the string representation of each row.
+//
 func (rows Rows) String() (s string) {
 	for x := range rows {
 		s += fmt.Sprint(rows[x])

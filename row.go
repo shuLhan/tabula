@@ -1,12 +1,12 @@
-// Copyright 2016 Mhd Sulhan <ms@kilabit.info>. All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
+// Copyright 2017 M. Shulhan <ms@kilabit.info>. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be found
+// in the LICENSE file.
 
 package tabula
 
-/*
-Row represent slice of record.
-*/
+//
+// Row represent slice of record.
+//
 type Row []*Record
 
 //
@@ -16,9 +16,9 @@ func (row *Row) Len() int {
 	return len(*row)
 }
 
-/*
-PushBack will add new record to the end of row.
-*/
+//
+// PushBack will add new record to the end of row.
+//
 func (row *Row) PushBack(r *Record) {
 	*row = append(*row, r)
 }
@@ -45,10 +45,10 @@ func (row *Row) Clone() *Row {
 	return &clone
 }
 
-/*
-IsNilAt return true if there is no record value in row at `idx`, otherwise
-return false.
-*/
+//
+// IsNilAt return true if there is no record value in row at `idx`, otherwise
+// return false.
+//
 func (row *Row) IsNilAt(idx int) bool {
 	if idx < 0 {
 		return true
@@ -62,9 +62,9 @@ func (row *Row) IsNilAt(idx int) bool {
 	return (*row)[idx].IsNil()
 }
 
-/*
-SetValueAt will set the value of row at cell index `idx` with record `rec`.
-*/
+//
+// SetValueAt will set the value of row at cell index `idx` with record `rec`.
+//
 func (row *Row) SetValueAt(idx int, rec *Record) {
 	(*row)[idx] = rec
 }
