@@ -6,7 +6,7 @@ Package tabula is a Go library for working with rows, columns, or matrix
 (table), or in another terms working with data set.
 
 NOTE: This package has been deprecated. See
-https://github.com/shuLhan/share/lib/tabule for latest implementation.
+https://github.com/shuLhan/share/tree/master/lib/tabula for latest implementation.
 
 # Overview
 
